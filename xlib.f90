@@ -1,6 +1,6 @@
 ! xlib.f90
 !
-! Interface to xlib for Fortran 2003/2008.
+! Interface to Xlib for Fortran 2003/2008.
 !
 ! Author:  Philipp Engel
 ! Date:    2018-FEB-03
@@ -93,11 +93,459 @@ module xlib_types
     use, intrinsic :: iso_c_binding
     implicit none
 
+    ! XAnyEvent
+    type, bind(c) :: x_any_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+    end type x_any_event
+
+    ! XKeyEvent
+    type, bind(c) :: x_key_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: root
+        integer(kind=c_long) :: subwindow
+        integer(kind=c_long) :: time
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: x_root
+        integer(kind=c_int)  :: y_root
+        integer(kind=c_int)  :: state
+        integer(kind=c_int)  :: keycode
+        logical(kind=c_bool) :: same_screen
+    end type x_key_event
+
+    ! XButtonEvent
+    type, bind(c) :: x_button_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: root
+        integer(kind=c_long) :: subwindow
+        integer(kind=c_long) :: time
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: x_root
+        integer(kind=c_int)  :: y_root
+        integer(kind=c_int)  :: state
+        integer(kind=c_int)  :: button
+        logical(kind=c_bool) :: same_screen
+    end type x_button_event
+
+    ! XMotionEvent
+    type, bind(c) :: x_motion_event
+        integer(kind=c_int)           :: type
+        integer(kind=c_long)          :: serial
+        logical(kind=c_bool)          :: send_event
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: window
+        integer(kind=c_long)          :: root
+        integer(kind=c_long)          :: subwindow
+        integer(kind=c_long)          :: time
+        integer(kind=c_int)           :: x
+        integer(kind=c_int)           :: y
+        integer(kind=c_int)           :: x_root
+        integer(kind=c_int)           :: y_root
+        integer(kind=c_int)           :: state
+        character(kind=c_char, len=1) :: is_hint
+        logical(kind=c_bool)          :: same_screen
+    end type x_motion_event
+
+    ! XCrossingEvent
+    type, bind(c) :: x_crossing_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: root
+        integer(kind=c_long) :: subwindow
+        integer(kind=c_long) :: time
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: x_root
+        integer(kind=c_int)  :: y_root
+        integer(kind=c_int)  :: mode
+        integer(kind=c_int)  :: detail
+        logical(kind=c_bool) :: same_screen
+        logical(kind=c_bool) :: focus
+        integer(kind=c_int)  :: state
+    end type x_crossing_event
+
+    ! XFocusChangeEvent
+    type, bind(c) :: x_focus_change_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: mode
+        integer(kind=c_int)  :: detail
+    end type x_focus_change_event
+
+    ! XExposeEvent
+    type, bind(c) :: x_expose_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: count
+    end type x_expose_event
+
+    ! XGraphicsExposeEvent
+    type, bind(c) :: x_graphics_expose_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: drawable
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: count
+        integer(kind=c_int)  :: major_code
+        integer(kind=c_int)  :: minor_code
+    end type x_graphics_expose_event
+
+    ! XGraphicsExposeEvent
+    type, bind(c) :: x_no_expose_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: drawable
+        integer(kind=c_int)  :: major_code
+        integer(kind=c_int)  :: minor_code
+    end type x_no_expose_event
+
+    ! XVisibilityEvent
+    type, bind(c) :: x_visibility_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: state
+    end type x_visibility_event
+
+    ! XCreateWindowEvent
+    type, bind(c) :: x_create_window_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: parent
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: border_width
+        logical(kind=c_bool) :: override_redirect
+    end type x_create_window_event
+
+    ! XDestroyWindowEvent
+    type, bind(c) :: x_destroy_window_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+    end type x_destroy_window_event
+
+    ! XUnmapEvent
+    type, bind(c) :: x_unmap_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        logical(kind=c_bool) :: from_configure
+    end type x_unmap_event
+
+    ! XMapEvent
+    type, bind(c) :: x_map_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        logical(kind=c_bool) :: override_redirect
+    end type x_map_event
+
+    ! XMapRequestEvent
+    type, bind(c) :: x_map_request_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: parent
+        integer(kind=c_long) :: window
+    end type x_map_request_event
+
+    ! XReparentEvent
+    type, bind(c) :: x_reparent_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: parent
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        logical(kind=c_bool) :: override_redirect
+    end type x_reparent_event
+
+    ! XConfigureEvent
+    type, bind(c) :: x_configure_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: border_width
+        integer(kind=c_long) :: above
+        logical(kind=c_bool) :: override_redirect
+    end type x_configure_event
+
+    ! XGravityEvent
+    type, bind(c) :: x_gravity_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+    end type x_gravity_event
+
+    ! XResizeRequestEvent
+    type, bind(c) :: x_resize_request_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+    end type x_resize_request_event
+
+    ! XConfigureRequestEvent
+    type, bind(c) :: x_configure_request_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: parent
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: border_width
+        integer(kind=c_long) :: above
+        integer(kind=c_int)  :: detail
+        integer(kind=c_long) :: value_mask
+    end type x_configure_request_event
+
+    ! XCircularEvent
+    type, bind(c) :: x_circulate_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: event
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: place
+    end type x_circulate_event
+
+    ! XCircularRequestEvent
+    type, bind(c) :: x_circulate_request_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: parent
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: place
+    end type x_circulate_request_event
+
+    ! XPropertyEvent
+    type, bind(c) :: x_property_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: atom
+        integer(kind=c_long) :: time
+        integer(kind=c_int)  :: state
+    end type x_property_event
+
+    ! XSelectionClearEvent
+    type, bind(c) :: x_selection_clear_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: selection
+        integer(kind=c_long) :: time
+    end type x_selection_clear_event
+
+    ! XSelectionRequestEvent
+    type, bind(c) :: x_selection_request_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: owner
+        integer(kind=c_long) :: requestor
+        integer(kind=c_long) :: selection
+        integer(kind=c_long) :: target
+        integer(kind=c_long) :: property
+        integer(kind=c_long) :: time
+    end type x_selection_request_event
+
+    ! XSelectionEvent
+    type, bind(c) :: x_selection_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: requestor
+        integer(kind=c_long) :: selection
+        integer(kind=c_long) :: target
+        integer(kind=c_long) :: property
+        integer(kind=c_long) :: time
+    end type x_selection_event
+
+    ! XColormapEvent
+    type, bind(c) :: x_colormap_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: colormap
+        logical(kind=c_bool) :: new
+        integer(kind=c_int)  :: state
+    end type x_colormap_event
+
+    ! Union for XClientMessageEvent
+    type, bind(c) :: union
+        character(kind=c_char), dimension(20) :: b
+        integer(kind=c_short),  dimension(10) :: s
+        integer(kind=c_long),   dimension(5)  :: l
+    end type union
+
+    ! XClientMessageEvent
+    type, bind(c) :: x_client_message_event
+        integer(kind=c_int)  type
+        integer(kind=c_long) serial
+        logical(kind=c_bool) send_event
+        type(c_ptr)          display
+        integer(kind=c_long) window
+        integer(kind=c_long) message_type
+        integer(kind=c_int)  format
+        type(union)          data
+    end type x_client_message_event
+
+    ! XMappingEvent
+    type, bind(c) :: x_mapping_event
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_int)  :: request
+        integer(kind=c_int)  :: first_keycode
+        integer(kind=c_int)  :: count
+    end type x_mapping_event
+
+    ! XErrorEvent
+    type, bind(c) :: x_error_event
+        integer(kind=c_int)           :: type
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: resourceid
+        integer(kind=c_long)          :: serial
+        character(kind=c_signed_char) :: error_code
+        character(kind=c_signed_char) :: request_code
+        character(kind=c_signed_char) :: minor_code
+    end type x_error_event
+
+    ! XKeymapEvent
+    type, bind(c) :: x_keymap_event
+        integer(kind=c_int)                   :: type
+        integer(kind=c_long)                  :: serial
+        logical(kind=c_bool)                  :: send_event
+        type(c_ptr)                           :: display
+        integer(kind=c_long)                  :: window
+        character(kind=c_char), dimension(32) :: key_vector
+    end type x_keymap_event
+
+    ! XEvent
     type, bind(c) :: x_event
         integer(kind=c_int)                 :: type
+        type(x_any_event)                   :: xany
+        type(x_key_event)                   :: xkey
+        type(x_button_event)                :: xbutton
+        type(x_motion_event)                :: xmotion
+        type(x_crossing_event)              :: xcrossing
+        type(x_focus_change_event)          :: xfocus
+        type(x_expose_event)                :: xexpose
+        type(x_graphics_expose_event)       :: xgraphicsexpose
+        type(x_no_expose_event)             :: xnoexpose
+        type(x_visibility_event)            :: xvisibility
+        type(x_create_window_event)         :: xcreatewindow
+        type(x_destroy_window_event)        :: xdestroywindow
+        type(x_unmap_event)                 :: xunmap
+        type(x_map_event)                   :: xmap
+        type(x_map_request_event)           :: xmaprequest
+        type(x_reparent_event)              :: xreparent
+        type(x_configure_event)             :: xconfigure
+        type(x_gravity_event)               :: xgravity
+        type(x_resize_request_event)        :: xresizerequest
+        type(x_configure_request_event)     :: xconfigurerequest
+        type(x_circulate_event)             :: xcirculate
+        type(x_circulate_request_event)     :: xcirculaterequest
+        type(x_property_event)              :: xproperty
+        type(x_selection_clear_event)       :: xselectionclear
+        type(x_selection_request_event)     :: xselectionrequest
+        type(x_selection_event)             :: xselection
+        type(x_colormap_event)              :: xcolormap
+        type(x_client_message_event)        :: xclient
+        type(x_mapping_event)               :: xmapping
+        type(x_error_event)                 :: xerror
+        type(x_keymap_event)                :: xkeymap
         integer(kind=c_long), dimension(24) :: pad
     end type x_event
 
+    ! XGCValues
     type, bind(c) :: x_gc_values
         integer(kind=c_int)           :: logical_operation
         integer(kind=c_long)          :: plane_mask
@@ -129,6 +577,7 @@ module xlib_types
         integer(kind=c_int) :: y
     end type aspect_ratio
 
+    ! XSizeHints
     type, bind(c) :: x_size_hints
         integer(kind=c_long) :: flags
         integer(kind=c_int)  :: x
@@ -212,17 +661,38 @@ module xlib
             ! int XDefaultScreen(Display *display)
             use, intrinsic :: iso_c_binding
             implicit none
-            type(c_ptr), intent(in), value  :: display
-            integer(kind=c_int)             :: x_default_screen
+            type(c_ptr), intent(in), value :: display
+            integer(kind=c_int)            :: x_default_screen
         end function x_default_screen
+
+        function x_intern_atom(display, atom_name, only_if_exists) bind(c, name="XInternAtom")
+            !Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),                   intent(in), value :: display
+            character(kind=c_char, len=1), intent(in)        :: atom_name
+            logical(kind=c_bool),          intent(in), value :: only_if_exists
+            integer(kind=c_long)                             :: x_intern_atom
+        end function x_intern_atom
 
         function x_open_display(display_name) bind(c, name="XOpenDisplay")
             ! Display *XOpenDisplay (char *display_name)
             use, intrinsic :: iso_c_binding
             implicit none
-            character(kind=c_char), dimension(*), intent(in) :: display_name
-            type(c_ptr)                                      :: x_open_display
+            character(kind=c_char, len=1), intent(in) :: display_name
+            type(c_ptr)                               :: x_open_display
         end function x_open_display
+
+        function x_set_wm_protocols(display, w, protocols, count) bind(c, name="XSetWMProtocols")
+            ! Status XSetWMProtocols(Display *display, Window w, Atom *protocols, int count)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: w
+            integer(kind=c_long), intent(in)        :: protocols
+            integer(kind=c_int),  intent(in), value :: count
+            integer(kind=c_int)                     :: x_set_wm_protocols
+        end function x_set_wm_protocols
 
         function x_white_pixel(display, screen_number) bind(c, name="XWhitePixel")
             ! unsigned long XWhitePixel(Display *display, int screen_number)
