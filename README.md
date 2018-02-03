@@ -1,5 +1,5 @@
 # f03xlib
-An `iso_c_binding` interface to xlib for Fortran 2003/2008. See directory
+An `iso_c_binding` interface to Xlib for Fortran 2003/2008. See directory
 `examples/` for programmes utilising the interface.
 
 ## Build
