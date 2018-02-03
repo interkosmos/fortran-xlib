@@ -4,25 +4,8 @@
 # Distribution / packaging
 env/
 build/
-develop-eggs/
 dist/
-downloads/
-lib/
-lib64/
-parts/
-sdist/
 var/
-.installed.cfg
-
-# Log files
-*.log
-*.log.1
-*.log.2
-*.log.3
-*.log.4
-*.log.5
 
 # Other stuff
-*.nja
-*.csv
 *.swp
