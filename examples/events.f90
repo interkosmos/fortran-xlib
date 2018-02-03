@@ -25,7 +25,6 @@ program main
     integer(kind=8)   :: black
     integer(kind=8)   :: white
     integer(kind=8)   :: wm_delete_window
-    type(x_configure_event) :: xce
 
     ! Create window.
     display = x_open_display(c_null_char)
@@ -63,9 +62,8 @@ program main
                 write(*, *) 'Expose'
             case(configure_notify)
                 write(*, *) 'ConfigureNotify'
-                xce = event%xconfigure
-                write(*, *) xce%x
-                write(*, *) xce%y
+                write(*, *) 'width:  ', event%xconfigure%width
+                write(*, *) 'height: ', event%xconfigure%height
             case(client_message)
                 write(*, *) 'ClientMessage'
             case(key_press)
