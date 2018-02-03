@@ -3,7 +3,7 @@
 ! Interface to xlib for Fortran 2003/2008.
 !
 ! Author:  Philipp Engel
-! Date:    2018-FEB-01
+! Date:    2018-FEB-03
 ! Licence: ISC
 module xlib_consts
     use, intrinsic :: iso_c_binding
@@ -48,44 +48,36 @@ module xlib_consts
     integer(kind=c_int), parameter :: lock_mask    = z'02'
     integer(kind=c_int), parameter :: control_mask = z'04'
 
+    integer(kind=c_long), parameter :: no_event_mask              = z'00000000'
+    integer(kind=c_long), parameter :: key_press_mask             = z'00000001'
+    integer(kind=c_long), parameter :: key_release_mask           = z'00000002'
+    integer(kind=c_long), parameter :: button_press_mask          = z'00000004'
+    integer(kind=c_long), parameter :: button_release_mask        = z'00000008'
+    integer(kind=c_long), parameter :: enter_window_mask          = z'00000010'
+    integer(kind=c_long), parameter :: leave_window_mask          = z'00000020'
     integer(kind=c_long), parameter :: button1_motion_mask        = z'00000100'
     integer(kind=c_long), parameter :: button2_motion_mask        = z'00000200'
     integer(kind=c_long), parameter :: button3_motion_mask        = z'00000400'
     integer(kind=c_long), parameter :: button4_motion_mask        = z'00000800'
     integer(kind=c_long), parameter :: button5_motion_mask        = z'00001000'
     integer(kind=c_long), parameter :: button_motion_mask         = z'00002000'
-    integer(kind=c_long), parameter :: button_press_mask          = z'00000004'
-    integer(kind=c_long), parameter :: button_release_mask        = z'00000008'
-    integer(kind=c_long), parameter :: enter_window_mask          = z'00000010'
-    integer(kind=c_long), parameter :: exposure_mask              = z'00008000'
-    integer(kind=c_long), parameter :: focus_change_mask          = z'00200000'
-    integer(kind=c_long), parameter :: key_press_mask             = z'00000001'
-    integer(kind=c_long), parameter :: key_release_mask           = z'00000002'
     integer(kind=c_long), parameter :: keymap_state_mask          = z'00004000'
-    integer(kind=c_long), parameter :: leave_window_mask          = z'00000020'
-    integer(kind=c_long), parameter :: no_event_mask              = z'00000000'
-    integer(kind=c_long), parameter :: resize_redirect_mask       = z'00040000'
+    integer(kind=c_long), parameter :: exposure_mask              = z'00008000'
+    integer(kind=c_long), parameter :: visibility_change_mask     = z'00010000'
     integer(kind=c_long), parameter :: structure_notify_mask      = z'00020000'
+    integer(kind=c_long), parameter :: resize_redirect_mask       = z'00040000'
     integer(kind=c_long), parameter :: substructure_notify_mask   = z'00080000'
     integer(kind=c_long), parameter :: substructure_redirect_mask = z'00100000'
-    integer(kind=c_long), parameter :: visibility_change_mask     = z'00010000'
-    integer(kind=c_long), parameter :: visual_all_mask            = z'000001ff'
+    integer(kind=c_long), parameter :: focus_change_mask          = z'00200000'
 end module xlib_consts
 
 module xlib_types
     use, intrinsic :: iso_c_binding
     implicit none
 
-    !type, bind(c) :: x_event
-    !    integer(kind=c_int)  :: event_type
-    !    integer(kind=c_long) :: serial
-    !    logical(kind=c_bool) :: send_event
-    !    type(c_ptr)          :: display
-    !    integer(kind=c_long) :: window
-    !end type x_event
-
     type, bind(c) :: x_event
-        integer(kind=c_long), dimension(24) :: pad
+        integer(kind=c_int)                 :: event_type
+        integer(kind=c_long), dimension(30) :: event_data
     end type x_event
 
     type, bind(c) :: x_gc_values

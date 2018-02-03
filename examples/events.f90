@@ -47,7 +47,7 @@ program main
     do
         write(*, *) 'waiting for event ...'
         call x_next_event(display, c_loc(event))
-        write(*, '(a, i0)') 'event type: ', event%pad(1)
+        write(*, '(a, i0)') 'event type: ', event%event_type
     end do
 
     call x_free_gc(display, gc)
