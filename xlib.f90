@@ -9,6 +9,23 @@ module xlib_consts
     use, intrinsic :: iso_c_binding
     implicit none
 
+    ! XSizeHint flags.
+    integer(kind=c_long), parameter :: us_position   = ishft(1, 0)
+    integer(kind=c_long), parameter :: us_size       = ishft(1, 1)
+    integer(kind=c_long), parameter :: p_position    = ishft(1, 2)
+    integer(kind=c_long), parameter :: p_size        = ishft(1, 3)
+    integer(kind=c_long), parameter :: p_min_size    = ishft(1, 4)
+    integer(kind=c_long), parameter :: p_max_size    = ishft(1, 5)
+    integer(kind=c_long), parameter :: p_resize_inc  = ishft(1, 6)
+    integer(kind=c_long), parameter :: p_aspect      = ishft(1, 7)
+    integer(kind=c_long), parameter :: p_base_size   = ishft(1, 8)
+    integer(kind=c_long), parameter :: p_win_gravity = ishft(1, 9)
+    integer(kind=c_long), parameter :: p_all_hints   = ior(p_position, &
+                                                       ior(p_size, &
+                                                       ior(p_min_size, &
+                                                       ior(p_max_size, &
+                                                       ior(p_resize_inc, p_aspect)))))
+
     integer(kind=c_int), parameter :: key_press         = 2
     integer(kind=c_int), parameter :: key_release       = 3
     integer(kind=c_int), parameter :: button_press      = 4
@@ -48,6 +65,7 @@ module xlib_consts
     integer(kind=c_int), parameter :: lock_mask    = z'02'
     integer(kind=c_int), parameter :: control_mask = z'04'
 
+    ! XEvent masks.
     integer(kind=c_long), parameter :: no_event_mask              = z'00000000'
     integer(kind=c_long), parameter :: key_press_mask             = z'00000001'
     integer(kind=c_long), parameter :: key_release_mask           = z'00000002'
@@ -105,12 +123,42 @@ module xlib_types
         integer(kind=c_int)           :: dash_offset
         character(kind=c_char, len=1) :: dashes
     end type x_gc_values
+
+    type, bind(c) :: aspect_ratio
+        integer(kind=c_int) :: x
+        integer(kind=c_int) :: y
+    end type aspect_ratio
+
+    type, bind(c) :: x_size_hints
+        integer(kind=c_long) :: flags
+        integer(kind=c_int)  :: x
+        integer(kind=c_int)  :: y
+        integer(kind=c_int)  :: width
+        integer(kind=c_int)  :: height
+        integer(kind=c_int)  :: min_width
+        integer(kind=c_int)  :: min_height
+        integer(kind=c_int)  :: max_width
+        integer(kind=c_int)  :: max_height
+        type(aspect_ratio)   :: min_aspect
+        type(aspect_ratio)   :: max_aspect
+        integer(kind=c_int)  :: base_width
+        integer(kind=c_int)  :: base_height
+        integer(kind=c_int)  :: win_gravity
+    end type x_size_hints
 end module xlib_types
 
 module xlib
     implicit none
 
     interface
+        function x_alloc_size_hints() bind(c, name="XAllocSizeHints")
+            ! XSizeHints *XAllocSizeHints()
+            use, intrinsic :: iso_c_binding
+            use xlib_types
+            implicit none
+            type(x_size_hints) :: x_alloc_size_hints
+        end function x_alloc_size_hints
+
         function x_black_pixel(display, screen_number) bind(c, name="XBlackPixel")
             ! unsigned long XBlackPixel(Display *display, int screen_number)
             use, intrinsic :: iso_c_binding
@@ -208,6 +256,13 @@ module xlib
             integer(kind=c_long), intent(in), value :: w
         end subroutine x_destroy_window
 
+        subroutine x_free(data) bind(c, name="XFree")
+            ! XFree(void *data)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr), intent(in), value :: data
+        end subroutine x_free
+
         subroutine x_free_gc(display, gc) bind(c, name="XFreeGC")
             ! XFreeGC(Display *display, GC gc)
             use, intrinsic :: iso_c_binding
@@ -229,8 +284,8 @@ module xlib
             use, intrinsic :: iso_c_binding
             use xlib_types
             implicit none
-            type(c_ptr), intent(in), value :: display
-            type(c_ptr), intent(in), value :: event_return
+            type(c_ptr),   intent(in), value :: display
+            type(x_event), intent(inout)     :: event_return
         end subroutine x_next_event
 
         subroutine x_select_input(display, w, event_mask) bind(c, name="XSelectInput")
@@ -259,6 +314,16 @@ module xlib
             type(c_ptr),          intent(in), value :: gc
             integer(kind=c_long), intent(in), value :: foreground
         end subroutine x_set_foreground
+
+        subroutine x_set_wm_normal_hints(display, w, hints) bind(c, name="XSetWMNormalHints")
+            ! XSetWMNormalHints(Display *display, Window w, XSizeHints *hints)
+            use, intrinsic :: iso_c_binding
+            use xlib_types
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: w
+            type(x_size_hints),   intent(in)        :: hints
+        end subroutine x_set_wm_normal_hints
 
         subroutine x_store_name(display, w, window_name) bind(c, name="XStoreName")
             ! XStoreName(Display *display, Window w, char *window_name)
