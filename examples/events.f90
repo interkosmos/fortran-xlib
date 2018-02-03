@@ -1,26 +1,28 @@
-! example.f90
+! events.f90
 !
-! Simple example application to create a window with xlib.
+! Example that shows the capture of events.
+!
 ! Author:  Philipp Engel
-! Date:    2018-FEB-01
+! Date:    2018-FEB-03
 ! Licence: ISC
 !
 ! Build with:
-! $ gfortran8 -c xlib.f90
-! $ gfortran8 -o example -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 example.f90 xlib.o
+! $ gfortran8 -o events -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 events.f90 xlib.o
 program main
     use iso_c_binding
     use xlib
-    use types
+    use xlib_consts
+    use xlib_types
     implicit none
-    type(x_gc_values) :: values
-    type(c_ptr)       :: display
-    type(c_ptr)       :: gc
-    integer           :: screen
-    integer(kind=8)   :: root
-    integer(kind=8)   :: window
-    integer(kind=8)   :: black
-    integer(kind=8)   :: white
+    type(c_ptr)           :: display
+    type(c_ptr)           :: gc
+    type(x_event), target :: event
+    type(x_gc_values)     :: values
+    integer               :: screen
+    integer(kind=8)       :: root
+    integer(kind=8)       :: window
+    integer(kind=8)       :: black
+    integer(kind=8)       :: white
 
     display = x_open_display(c_null_char)
     screen  = x_default_screen(display)
@@ -33,6 +35,8 @@ program main
 
     gc = x_create_gc(display, window, 0, values)
 
+    call x_select_input(display, window, ior(exposure_mask, key_press_mask));
+
     call x_set_background(display, gc, white)
     call x_set_foreground(display, gc, black)
 
@@ -40,7 +44,11 @@ program main
     call x_clear_window(display, window)
     call x_sync(display, .false._c_bool)
 
-    call sleep(1)
+    do
+        write(*, *) 'waiting for event ...'
+        call x_next_event(display, c_loc(event))
+        write(*, '(a, i0)') 'event type: ', event%pad(1)
+    end do
 
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
