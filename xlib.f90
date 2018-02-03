@@ -76,8 +76,8 @@ module xlib_types
     implicit none
 
     type, bind(c) :: x_event
-        integer(kind=c_int)                 :: event_type
-        integer(kind=c_long), dimension(30) :: event_data
+        integer(kind=c_int)                 :: type
+        integer(kind=c_long), dimension(24) :: pad
     end type x_event
 
     type, bind(c) :: x_gc_values
@@ -185,12 +185,12 @@ module xlib
             integer(kind=c_long)                   :: x_white_pixel
         end function x_white_pixel
 
-        subroutine x_clear_window(display, window) bind(c, name="XClearWindow")
+        subroutine x_clear_window(display, w) bind(c, name="XClearWindow")
             ! XClearWindow(Display *display, Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: window
+            integer(kind=c_long), intent(in), value :: w
         end subroutine x_clear_window
 
         subroutine x_close_display(display) bind(c, name="XCloseDisplay")
@@ -200,12 +200,12 @@ module xlib
             type(c_ptr), intent(in), value :: display
         end subroutine x_close_display
 
-        subroutine x_destroy_window(display, window) bind(c, name="XDestroyWindow")
+        subroutine x_destroy_window(display, w) bind(c, name="XDestroyWindow")
             ! XDestroyWindow(Display *display; Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: window
+            integer(kind=c_long), intent(in), value :: w
         end subroutine x_destroy_window
 
         subroutine x_free_gc(display, gc) bind(c, name="XFreeGC")
@@ -216,12 +216,12 @@ module xlib
             type(c_ptr), intent(in), value :: gc
         end subroutine x_free_gc
 
-        subroutine x_map_window(display, window) bind(c, name="XMapWindow")
+        subroutine x_map_window(display, w) bind(c, name="XMapWindow")
             ! XMapWindow(Display *display, Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: window
+            integer(kind=c_long), intent(in), value :: w
         end subroutine
 
         subroutine x_next_event(display, event_return) bind(c, name="XNextEvent")
@@ -233,12 +233,12 @@ module xlib
             type(c_ptr), intent(in), value :: event_return
         end subroutine x_next_event
 
-        subroutine x_select_input(display, window, event_mask) bind(c, name="XSelectInput")
-            ! XSelectInput(Display *display, Window window, long event_mask)
+        subroutine x_select_input(display, w, event_mask) bind(c, name="XSelectInput")
+            ! XSelectInput(Display *display, Window w, long event_mask)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: window
+            integer(kind=c_long), intent(in), value :: w
             integer(kind=c_long), intent(in), value :: event_mask
         end subroutine
 
@@ -259,6 +259,15 @@ module xlib
             type(c_ptr),          intent(in), value :: gc
             integer(kind=c_long), intent(in), value :: foreground
         end subroutine x_set_foreground
+
+        subroutine x_store_name(display, w, window_name) bind(c, name="XStoreName")
+            ! XStoreName(Display *display, Window w, char *window_name)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),                   intent(in), value :: display
+            integer(kind=c_long),          intent(in), value :: w
+            character(kind=c_char, len=1), intent(in)        :: window_name
+        end subroutine x_store_name
 
         subroutine x_sync(display, discard) bind(c, name="XSync")
             ! XSync(Display *display, Bool discard)

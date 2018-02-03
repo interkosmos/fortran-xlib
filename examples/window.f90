@@ -11,7 +11,7 @@
 program main
     use iso_c_binding
     use xlib
-    use types
+    use xlib_types
     implicit none
     type(c_ptr)       :: display
     type(c_ptr)       :: gc
@@ -30,6 +30,7 @@ program main
     white = x_white_pixel(display, screen)
 
     window = x_create_simple_window(display, root, 0, 0, 300, 200, 5, black, white)
+    call x_store_name(display, window, c_char_'Fortran' // c_null_char)
 
     gc = x_create_gc(display, window, 0, values)
 
