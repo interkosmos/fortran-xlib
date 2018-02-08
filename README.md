@@ -9,7 +9,7 @@ $ gfortran8 -c xlib.f90
 ```
 Then, compile and link your programme:
 ```
-$ gfortran8 -o example -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 example.f90 xlib.o
+$ gfortran8 -o window -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 examples/window.f90 xlib.o
 ```
 
 ## Licence
