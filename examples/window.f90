@@ -10,9 +10,9 @@
 ! $ gfortran8 -o window -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 window.f90 xlib.o
 program main
     use, intrinsic :: iso_c_binding
-    use xlib
-    use xlib_consts
-    use xlib_types
+    use :: xlib
+    use :: xlib_consts
+    use :: xlib_types
     implicit none
     type(c_ptr)        :: display
     type(c_ptr)        :: gc

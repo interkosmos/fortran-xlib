@@ -5,6 +5,9 @@
 ! Author:  Philipp Engel
 ! Date:    2018-FEB-03
 ! Licence: ISC
+!
+! Build with:
+! $ gfortran8 -c xlib.f90
 module xlib_consts
     use, intrinsic :: iso_c_binding
     implicit none
@@ -456,23 +459,16 @@ module xlib_types
         integer(kind=c_int)  :: state
     end type x_colormap_event
 
-    ! Union for XClientMessageEvent
-    type, bind(c) :: union
-        character(kind=c_char), dimension(20) :: b
-        integer(kind=c_short),  dimension(10) :: s
-        integer(kind=c_long),   dimension(5)  :: l
-    end type union
-
     ! XClientMessageEvent
     type, bind(c) :: x_client_message_event
-        integer(kind=c_int)  type
-        integer(kind=c_long) serial
-        logical(kind=c_bool) send_event
-        type(c_ptr)          display
-        integer(kind=c_long) window
-        integer(kind=c_long) message_type
-        integer(kind=c_int)  format
-        type(union)          data
+        integer(kind=c_int)  :: type
+        integer(kind=c_long) :: serial
+        logical(kind=c_bool) :: send_event
+        type(c_ptr)          :: display
+        integer(kind=c_long) :: window
+        integer(kind=c_long) :: message_type
+        integer(kind=c_int)  :: format
+        type(c_ptr)          :: data
     end type x_client_message_event
 
     ! XMappingEvent
@@ -666,7 +662,7 @@ module xlib
         end function x_default_screen
 
         function x_intern_atom(display, atom_name, only_if_exists) bind(c, name="XInternAtom")
-            !Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
+            ! Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),                   intent(in), value :: display
