@@ -5,9 +5,6 @@
 ! Author:  Philipp Engel
 ! Date:    2018-FEB-03
 ! Licence: ISC
-!
-! Build with:
-! $ gfortran8 -o window -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 window.f90 xlib.o
 program main
     use, intrinsic :: iso_c_binding
     use :: xlib

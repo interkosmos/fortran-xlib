@@ -5,9 +5,6 @@
 ! Author:  Philipp Engel
 ! Date:    2018-FEB-03
 ! Licence: ISC
-!
-! Build with:
-! $ gfortran8 -o events -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ -lX11 events.f90 xlib.o
 program main
     use, intrinsic :: iso_c_binding
     use :: xlib
@@ -18,8 +15,8 @@ program main
     type(c_ptr)       :: gc
     type(x_event)     :: event
     type(x_gc_values) :: values
+    integer           :: rc
     integer           :: screen
-    integer           :: status
     integer(kind=8)   :: root
     integer(kind=8)   :: window
     integer(kind=8)   :: black
@@ -50,7 +47,7 @@ program main
     call x_map_window(display, window)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW', .false._c_bool)
-    status           = x_set_wm_protocols(display, window, wm_delete_window, 1)
+    rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Event loop.
     do
