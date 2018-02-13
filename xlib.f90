@@ -679,10 +679,10 @@ module xlib
             ! Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
             use, intrinsic :: iso_c_binding
             implicit none
-            type(c_ptr),                   intent(in), value :: display
-            character(kind=c_char, len=1), intent(in)        :: atom_name
-            logical(kind=c_bool),          intent(in), value :: only_if_exists
-            integer(kind=c_long)                             :: x_intern_atom
+            type(c_ptr),            intent(in), value :: display
+            character(kind=c_char), intent(in)        :: atom_name
+            logical(kind=c_bool),   intent(in), value :: only_if_exists
+            integer(kind=c_long)                      :: x_intern_atom
         end function x_intern_atom
 
         function x_open_display(display_name) bind(c, name="XOpenDisplay")
@@ -819,11 +819,11 @@ module xlib
             ! XFreeColors(Display *display, Colormap colormap, unsigned long pixels[], int npixels, unsigned long planes)
             use, intrinsic :: iso_c_binding
             implicit none
-            type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: colormap
-            integer(kind=c_long), intent(in), value :: pixels   ! TODO: should be an array!
-            integer(kind=c_int),  intent(in), value :: npixels
-            integer(kind=c_long), intent(in), value :: planes
+            type(c_ptr),                        intent(in), value :: display
+            integer(kind=c_long),               intent(in), value :: colormap
+            integer(kind=c_long), dimension(*), intent(in)        :: pixels
+            integer(kind=c_int),                intent(in), value :: npixels
+            integer(kind=c_long),               intent(in), value :: planes
         end subroutine x_free_colors
 
         subroutine x_free_gc(display, gc) bind(c, name="XFreeGC")
