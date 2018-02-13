@@ -18,11 +18,11 @@ program main
     integer           :: screen
     integer           :: rc
     integer(kind=8)   :: root
-    integer(kind=8)   :: window
+    integer(kind=8)   :: colormap
     integer(kind=8)   :: black
     integer(kind=8)   :: white
+    integer(kind=8)   :: window
     integer(kind=8)   :: wm_delete_window
-    integer(kind=8)   :: colormap
 
     ! Create window.
     display  = x_open_display(c_null_char)
@@ -34,7 +34,7 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'red' // c_null_char, color, color)
+    rc = x_alloc_named_color(display, colormap, 'turquoise' // c_null_char, color, color)
 
     if (rc == 0) &
         print *, 'XAllocNamedColor failed to allocated colour.'
@@ -42,6 +42,9 @@ program main
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, 400, 300, 5, black, white)
     call x_store_name(display, window, c_char_'Fortran' // c_null_char)
+
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
+    rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)
@@ -64,11 +67,13 @@ program main
         select case(event%type)
             case(expose)
                 call draw(display, window, gc, color)
+            case(client_message)
+                call exit(0)
         end select
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, color%pixel, 1, int8(0))
+    call x_free_colors(display, colormap, (/ color%pixel /), 1, int8(0))
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)

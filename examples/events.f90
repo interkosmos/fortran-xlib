@@ -45,7 +45,7 @@ program main
     call x_select_input(display, window, ior(exposure_mask, ior(structure_notify_mask, key_press_mask)));
     call x_map_window(display, window)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW', .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Event loop.
@@ -60,6 +60,7 @@ program main
                 write(*, *) 'ConfigureNotify'
             case(client_message)
                 write(*, *) 'ClientMessage'
+                call exit(0)
             case(key_press)
                 write(*, *) 'KeyPress'
         end select
