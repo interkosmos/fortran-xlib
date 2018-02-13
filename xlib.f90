@@ -3,7 +3,6 @@
 ! Interface to Xlib for Fortran 2003/2008.
 !
 ! Author:  Philipp Engel
-! Date:    2018-FEB-03
 ! Licence: ISC
 module xlib_consts
     use, intrinsic :: iso_c_binding
@@ -523,37 +522,6 @@ module xlib_types
     ! XEvent
     type, bind(c) :: x_event
         integer(kind=c_int)                 :: type
-        type(x_any_event)                   :: xany
-        type(x_key_event)                   :: xkey
-        type(x_button_event)                :: xbutton
-        type(x_motion_event)                :: xmotion
-        type(x_crossing_event)              :: xcrossing
-        type(x_focus_change_event)          :: xfocus
-        type(x_expose_event)                :: xexpose
-        type(x_graphics_expose_event)       :: xgraphicsexpose
-        type(x_no_expose_event)             :: xnoexpose
-        type(x_visibility_event)            :: xvisibility
-        type(x_create_window_event)         :: xcreatewindow
-        type(x_destroy_window_event)        :: xdestroywindow
-        type(x_unmap_event)                 :: xunmap
-        type(x_map_event)                   :: xmap
-        type(x_map_request_event)           :: xmaprequest
-        type(x_reparent_event)              :: xreparent
-        type(x_configure_event)             :: xconfigure
-        type(x_gravity_event)               :: xgravity
-        type(x_resize_request_event)        :: xresizerequest
-        type(x_configure_request_event)     :: xconfigurerequest
-        type(x_circulate_event)             :: xcirculate
-        type(x_circulate_request_event)     :: xcirculaterequest
-        type(x_property_event)              :: xproperty
-        type(x_selection_clear_event)       :: xselectionclear
-        type(x_selection_request_event)     :: xselectionrequest
-        type(x_selection_event)             :: xselection
-        type(x_colormap_event)              :: xcolormap
-        type(x_client_message_event)        :: xclient
-        type(x_mapping_event)               :: xmapping
-        type(x_error_event)                 :: xerror
-        type(x_keymap_event)                :: xkeymap
         integer(kind=c_long), dimension(24) :: pad
     end type x_event
 
@@ -607,13 +575,14 @@ module xlib_types
         integer(kind=c_int)  :: win_gravity
     end type x_size_hints
 
+    ! XColor
     type, bind(c) :: x_color
-        integer(kind=c_long)          :: pixel
-        integer(kind=c_short)         :: red
-        integer(kind=c_short)         :: green
-        integer(kind=c_short)         :: blue
-        character(kind=c_char, len=1) :: flags
-        character(kind=c_char, len=1) :: pad
+        integer(kind=c_long)   :: pixel
+        integer(kind=c_short)  :: red
+        integer(kind=c_short)  :: green
+        integer(kind=c_short)  :: blue
+        character(kind=c_char) :: flags
+        character(kind=c_char) :: pad
     end type x_color
 end module xlib_types
 
@@ -623,8 +592,7 @@ module xlib
     interface
         function x_alloc_named_color(display, colormap, color_name, screen_def_return, exact_def_return) &
                 bind(c, name="XAllocNamedColor")
-            ! Status XAllocNamedColor(Display *display, Colormap colormap, char *color_name,
-            !     XColor *screen_def_return, XColor *exact_def_return)
+            ! Status XAllocNamedColor(Display *display, Colormap colormap, char *color_name, XColor *screen_def_return, XColor *exact_def_return)
             use, intrinsic :: iso_c_binding
             use xlib_types
             implicit none
@@ -665,11 +633,8 @@ module xlib
             type(c_ptr)                             :: x_create_gc
         end function x_create_gc
 
-        function x_create_simple_window(display, parent, &
-                                        x, y, &
-                                        width, height, &
-                                        border_width, &
-                                        border, background) bind(c, name="XCreateSimpleWindow")
+        function x_create_simple_window(display, parent, x, y, width, height, border_width, border, background) &
+                bind(c, name="XCreateSimpleWindow")
             ! Window XCreateSimpleWindow(Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background)
             use, intrinsic :: iso_c_binding
             implicit none
@@ -850,6 +815,17 @@ module xlib
             type(c_ptr), intent(in), value :: data
         end subroutine x_free
 
+        subroutine x_free_colors(display, colormap, pixels, npixels, planes) bind(c, name="XFreeColors")
+            ! XFreeColors(Display *display, Colormap colormap, unsigned long pixels[], int npixels, unsigned long planes)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: colormap
+            integer(kind=c_long), intent(in), value :: pixels   ! TODO: should be an array!
+            integer(kind=c_int),  intent(in), value :: npixels
+            integer(kind=c_long), intent(in), value :: planes
+        end subroutine x_free_colors
+
         subroutine x_free_gc(display, gc) bind(c, name="XFreeGC")
             ! XFreeGC(Display *display, GC gc)
             use, intrinsic :: iso_c_binding
@@ -904,8 +880,7 @@ module xlib
 
         subroutine x_set_line_attributes(display, gc, line_width, line_style, cap_style, join_style) &
                 bind(c, name="XSetLineAttributes")
-            ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style,
-            !     int cap_style, int join_style)
+            ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style, int cap_style, int join_style)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),         intent(in), value :: display
