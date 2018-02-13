@@ -66,7 +66,7 @@ program main
 
         select case(event%type)
             case(expose)
-                call draw(display, window, gc, color)
+                call draw()
             case(client_message)
                 exit
         end select
@@ -79,15 +79,7 @@ program main
     call x_close_display(display)
 
     contains
-        subroutine draw(display, window, gc, color)
-            use :: xlib
-            use :: xlib_types
-            implicit none
-            type(c_ptr),          intent(in) :: display
-            integer(kind=c_long), intent(in) :: window
-            type(c_ptr),          intent(in) :: gc
-            type(x_color),        intent(in) :: color
-
+        subroutine draw()
             call x_set_foreground(display, gc, black)
             call x_draw_line(display, window, gc, 10, 10, 200, 20)
             call x_draw_rectangle(display, window, gc, 10, 50, 100, 100)
