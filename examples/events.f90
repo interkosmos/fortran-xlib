@@ -3,7 +3,6 @@
 ! Example that shows the capture of events.
 !
 ! Author:  Philipp Engel
-! Date:    2018-FEB-03
 ! Licence: ISC
 program main
     use, intrinsic :: iso_c_binding
@@ -59,8 +58,6 @@ program main
                 write(*, *) 'Expose'
             case(configure_notify)
                 write(*, *) 'ConfigureNotify'
-                write(*, *) 'width:  ', event%xconfigure%width
-                write(*, *) 'height: ', event%xconfigure%height
             case(client_message)
                 write(*, *) 'ClientMessage'
             case(key_press)

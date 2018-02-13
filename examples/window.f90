@@ -3,7 +3,6 @@
 ! Simple example application to create a window with Xlib.
 !
 ! Author:  Philipp Engel
-! Date:    2018-FEB-03
 ! Licence: ISC
 program main
     use, intrinsic :: iso_c_binding
