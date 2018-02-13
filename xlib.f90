@@ -72,6 +72,7 @@ module xlib_consts
     integer(kind=c_long), parameter :: button_release_mask        = z'00000008'
     integer(kind=c_long), parameter :: enter_window_mask          = z'00000010'
     integer(kind=c_long), parameter :: leave_window_mask          = z'00000020'
+    integer(kind=c_long), parameter :: pointer_motion_mask        = z'00000040'
     integer(kind=c_long), parameter :: button1_motion_mask        = z'00000100'
     integer(kind=c_long), parameter :: button2_motion_mask        = z'00000200'
     integer(kind=c_long), parameter :: button3_motion_mask        = z'00000400'

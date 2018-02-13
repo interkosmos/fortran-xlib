@@ -13,6 +13,7 @@ program main
     type(c_ptr)       :: display
     type(c_ptr)       :: gc
     type(x_event)     :: event
+    type(x_configure_event) :: x_configure
     type(x_gc_values) :: values
     integer           :: rc
     integer           :: screen
@@ -33,7 +34,7 @@ program main
     window = x_create_simple_window(display, root, 0, 0, 300, 200, 5, black, white)
 
     ! Set window title.
-    call x_store_name(display, window, c_char_'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)
@@ -58,6 +59,10 @@ program main
                 write(*, *) 'Expose'
             case(configure_notify)
                 write(*, *) 'ConfigureNotify'
+
+                x_configure = transfer(event, x_configure)
+                write(*, *) 'width:  ', x_configure%width
+                write(*, *) 'height: ', x_configure%height
             case(client_message)
                 write(*, *) 'ClientMessage'
                 exit

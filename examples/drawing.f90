@@ -41,7 +41,7 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, 400, 300, 5, black, white)
-    call x_store_name(display, window, c_char_'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
@@ -52,7 +52,7 @@ program main
     call x_set_background(display, gc, white)
     call x_set_foreground(display, gc, black)
 
-    ! Set drawing styles.
+    ! Set (optional) drawing styles.
     call x_set_line_attributes(display, gc, 2, line_solid, cap_butt, join_bevel);
     call x_set_fill_style(display, gc, fill_solid)
 

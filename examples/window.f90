@@ -42,7 +42,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Set window title.
-    call x_store_name(display, window, c_char_'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)
