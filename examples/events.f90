@@ -10,18 +10,20 @@ program main
     use :: xlib_consts
     use :: xlib_types
     implicit none
-    type(c_ptr)             :: display
-    type(c_ptr)             :: gc
-    type(x_event)           :: event
-    type(x_configure_event) :: x_configure
-    type(x_gc_values)       :: values
-    integer                 :: rc
-    integer                 :: screen
-    integer(kind=8)         :: root
-    integer(kind=8)         :: window
-    integer(kind=8)         :: black
-    integer(kind=8)         :: white
-    integer(kind=8)         :: wm_delete_window
+    type(c_ptr)                   :: display
+    type(c_ptr)                   :: gc
+    type(x_event)                 :: event
+    type(x_configure_event)       :: x_configure
+    type(x_client_message_event)  :: x_client_message
+    type(x_gc_values)             :: values
+    integer                       :: rc
+    integer                       :: screen
+    integer(kind=8)               :: root
+    integer(kind=8)               :: window
+    integer(kind=8)               :: black
+    integer(kind=8)               :: white
+    integer(kind=8)               :: wm_delete_window
+    integer(kind=8), dimension(5) :: l
 
     ! Create window.
     display = x_open_display(c_null_char)
@@ -59,13 +61,15 @@ program main
                 write(*, *) 'Expose'
             case(configure_notify)
                 write(*, *) 'ConfigureNotify'
-
-                x_configure = transfer(event, x_configure)
-                write(*, *) 'width:  ', x_configure%width
-                write(*, *) 'height: ', x_configure%height
+                write(*, *) 'width:  ', event%x_configure%width
+                write(*, *) 'height: ', event%x_configure%height
             case(client_message)
                 write(*, *) 'ClientMessage'
-                exit
+
+                l = transfer(event%x_client_message%data, l)
+
+                if (l(1) == wm_delete_window) &
+                    exit
             case(key_press)
                 write(*, *) 'KeyPress'
         end select
