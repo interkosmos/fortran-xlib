@@ -523,37 +523,37 @@ module xlib_types
     ! XEvent
     type, bind(c) :: x_event
         integer(kind=c_int)                 :: type
-            type(x_any_event)               :: x_any
-            type(x_key_event)               :: x_key
-            type(x_button_event)            :: x_button
-            type(x_motion_event)            :: x_motion
-            type(x_crossing_event)          :: x_crossing
-            type(x_focus_change_event)      :: x_focus
-            type(x_expose_event)            :: x_expose
-            type(x_graphics_expose_event)   :: x_graphics_expose
-            type(x_no_expose_event)         :: x_no_expose
-            type(x_visibility_event)        :: x_visibility
-            type(x_create_window_event)     :: x_create_window
-            type(x_destroy_window_event)    :: x_destroy_window
-            type(x_unmap_event)             :: x_unmap
-            type(x_map_event)               :: x_map
-            type(x_map_request_event)       :: x_map_request
-            type(x_reparent_event)          :: x_reparent
-            type(x_configure_event)         :: x_configure
-            type(x_gravity_event)           :: x_gravity
-            type(x_resize_request_event)    :: x_resize_request
-            type(x_configure_request_event) :: x_configure_request
-            type(x_circulate_event)         :: x_circulate
-            type(x_circulate_request_event) :: x_circulate_request
-            type(x_property_event)          :: x_property
-            type(x_selection_clear_event)   :: x_selection_clear
-            type(x_selection_request_event) :: x_selection_request
-            type(x_selection_event)         :: x_selection
-            type(x_colormap_event)          :: x_colormap
-            type(x_client_message_event)    :: x_client_message
-            type(x_mapping_event)           :: x_mapping
-            type(x_error_event)             :: x_error
-            type(x_keymap_event)            :: x_keymap
+        type(x_any_event)                   :: x_any
+        type(x_key_event)                   :: x_key
+        type(x_button_event)                :: x_button
+        type(x_motion_event)                :: x_motion
+        type(x_crossing_event)              :: x_crossing
+        type(x_focus_change_event)          :: x_focus
+        type(x_expose_event)                :: x_expose
+        type(x_graphics_expose_event)       :: x_graphics_expose
+        type(x_no_expose_event)             :: x_no_expose
+        type(x_visibility_event)            :: x_visibility
+        type(x_create_window_event)         :: x_create_window
+        type(x_destroy_window_event)        :: x_destroy_window
+        type(x_unmap_event)                 :: x_unmap
+        type(x_map_event)                   :: x_map
+        type(x_map_request_event)           :: x_map_request
+        type(x_reparent_event)              :: x_reparent
+        type(x_configure_event)             :: x_configure
+        type(x_gravity_event)               :: x_gravity
+        type(x_resize_request_event)        :: x_resize_request
+        type(x_configure_request_event)     :: x_configure_request
+        type(x_circulate_event)             :: x_circulate
+        type(x_circulate_request_event)     :: x_circulate_request
+        type(x_property_event)              :: x_property
+        type(x_selection_clear_event)       :: x_selection_clear
+        type(x_selection_request_event)     :: x_selection_request
+        type(x_selection_event)             :: x_selection
+        type(x_colormap_event)              :: x_colormap
+        type(x_client_message_event)        :: x_client_message
+        type(x_mapping_event)               :: x_mapping
+        type(x_error_event)                 :: x_error
+        type(x_keymap_event)                :: x_keymap
         integer(kind=c_long), dimension(24) :: pad
     end type x_event
 
@@ -971,12 +971,30 @@ module xlib
             call x_next_event_(display, event_return)
 
             select case(event_return%type)
-                case(expose)
-                    event_return%x_expose = transfer(event_return, event_return%x_expose)
+                case(button_press)
+                    ! XButtonEvent
+                    event_return%x_button = transfer(event_return, event_return%x_button)
+                case(button_release)
+                    ! XButtonEvent
+                    event_return%x_button = transfer(event_return, event_return%x_button)
                 case(client_message)
+                    ! XClientMessageEvent
                     event_return%x_client_message = transfer(event_return, event_return%x_client_message)
                 case(configure_notify)
+                    ! XConfigureNotifyEvent
                     event_return%x_configure = transfer(event_return, event_return%x_configure)
+                case(expose)
+                    ! XExposeEvent
+                    event_return%x_expose = transfer(event_return, event_return%x_expose)
+                case(key_press)
+                    ! XKeyEvent
+                    event_return%x_key = transfer(event_return, event_return%x_key)
+                case(key_release)
+                    ! XKeyEvent
+                    event_return%x_key = transfer(event_return, event_return%x_key)
+                case(motion_notify)
+                    ! XMotionEvent
+                    event_return%x_motion= transfer(event_return, event_return%x_motion)
             end select
         end subroutine x_next_event
 end module xlib
