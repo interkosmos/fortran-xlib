@@ -68,7 +68,7 @@ program main
             case(expose)
                 call draw(display, window, gc, color)
             case(client_message)
-                call exit(0)
+                exit
         end select
     end do
 

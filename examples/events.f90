@@ -60,7 +60,7 @@ program main
                 write(*, *) 'ConfigureNotify'
             case(client_message)
                 write(*, *) 'ClientMessage'
-                call exit(0)
+                exit
             case(key_press)
                 write(*, *) 'KeyPress'
         end select
