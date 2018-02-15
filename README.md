@@ -1,13 +1,33 @@
 # f03xlib
-An `iso_c_binding` interface to Xlib for Fortran 2003/2008. See directory
-`examples/` for programmes utilising the interface.
+An `iso_c_binding` interface to Xlib for Fortran 2003/2008.
 
 ## Build
-Build the interface with your favourite Fortran compiler:
+You can use the provided Makefile to compile everything. Build the interface with:
+```
+$ make
+```
+Or run your favourite Fortran compiler directly:
 ```
 $ gfortran8 -c xlib.f90
 ```
-Then, compile and link your programme:
+
+## Examples
+Example programmes utilising the interface can be found in the directory `examples`:
+
+* `window.f90` displays a simple window.
+* `events.f90` captures X11 events.
+* `drawing.f90` draws some shapes on the window.
+* `starfield.f90` flys through a starfield.
+
+Build them with BSD make:
+```
+$ make window
+$ make events
+$ make drawing
+$ make starfield
+```
+
+Without BSD make, compile the examples manually, for instance:
 ```
 $ gfortran8 -o window -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ examples/window.f90 xlib.o -lX11
 ```
