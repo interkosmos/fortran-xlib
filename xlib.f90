@@ -719,6 +719,12 @@ module xlib
             integer(kind=c_int)            :: x_default_screen
         end function x_default_screen
 
+        function x_init_threads() bind(c, name='XInitThreads')
+            ! Status XInitThreads()
+            use, intrinsic :: iso_c_binding
+            integer(c_int) :: x_init_threads
+        end function
+
         function x_intern_atom(display, atom_name, only_if_exists) bind(c, name='XInternAtom')
             ! Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
             use, intrinsic :: iso_c_binding
@@ -736,6 +742,13 @@ module xlib
             character(kind=c_char, len=1), intent(in) :: display_name
             type(c_ptr)                               :: x_open_display
         end function x_open_display
+
+        function x_pending(display) bind(c, name='XPending')
+            ! int XPending(Display *display)
+            use, intrinsic :: iso_c_binding
+            type(c_ptr), intent(in), value :: display
+            integer(kind=c_int)            :: x_pending
+        end function x_pending
 
         function x_set_wm_protocols(display, w, protocols, count) bind(c, name='XSetWMProtocols')
             ! Status XSetWMProtocols(Display *display, Window w, Atom *protocols, int count)
