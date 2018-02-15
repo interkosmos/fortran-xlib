@@ -65,7 +65,6 @@ program main
                 write(*, *) 'height: ', event%x_configure%height
             case(client_message)
                 write(*, *) 'ClientMessage'
-
                 l = transfer(event%x_client_message%data, l)
 
                 if (l(1) == wm_delete_window) &
