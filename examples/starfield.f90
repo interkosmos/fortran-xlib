@@ -57,7 +57,6 @@ end module starfield
 
 program main
     use, intrinsic :: iso_c_binding
-    use :: omp_lib
     use :: xlib
     use :: xlib_consts
     use :: xlib_types
@@ -134,8 +133,6 @@ program main
         if (rc > 0) then
             call x_next_event(display, event)
         else
-            call move_stars()
-
             select case(event%type)
                 case(client_message)
                     long = transfer(event%x_client_message%data, long)
@@ -144,6 +141,7 @@ program main
                         exit
             end select
 
+            call move_stars()
             call draw()
             call usleep(int(5000, c_int32_t)) ! Sleep for 5 ms.
         end if
