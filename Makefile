@@ -10,6 +10,7 @@ WINDOW    = window
 EVENTS    = events
 DRAWING   = drawing
 STARFIELD = starfield
+WIREFRAME = wireframe
 
 all: $(OBJ)
 
@@ -28,7 +29,10 @@ $(DRAWING): $(DIR)/$*.f90 $(OBJ)
 $(STARFIELD): $(DIR)/$*.f90 $(OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
+$(WIREFRAME): $(DIR)/$*.f90 $(OBJ)
+	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
+
 .PHONY: clean
 
 clean:
-	rm *.mod $(OBJ) window events drawing starfield
+	rm *.mod $(OBJ) $(WINDOW) $(EVENTS) $(DRAWING) $(STARFIELD)
