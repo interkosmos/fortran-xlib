@@ -18,6 +18,7 @@ Example programmes utilising the interface can be found in the directory `exampl
 * `events.f90` captures X11 events.
 * `drawing.f90` draws some shapes on the window.
 * `starfield.f90` flys through a starfield.
+* `wireframe.f90` renders a wire-frame model of a Tie Fighter.
 
 Build them with BSD make:
 ```
@@ -25,6 +26,7 @@ $ make window
 $ make events
 $ make drawing
 $ make starfield
+$ make wireframe
 ```
 
 Without BSD make, compile the examples manually, for instance:
