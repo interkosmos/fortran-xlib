@@ -665,17 +665,29 @@ module xlib
             integer(kind=c_long)                   :: x_black_pixel
         end function x_black_pixel
 
-        function x_create_gc(display, drawable, value_mask, values) bind(c, name='XCreateGC')
+        function x_create_gc(display, d, value_mask, values) bind(c, name='XCreateGC')
             ! GC XCreateGC(Display *display, Drawable d, unsigned long valuemask, XGCValues *values)
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
             type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: drawable
+            integer(kind=c_long), intent(in), value :: d
             integer(kind=c_int),  intent(in), value :: value_mask
             type(x_gc_values),    intent(in)        :: values
             type(c_ptr)                             :: x_create_gc
         end function x_create_gc
+
+        function x_create_pixmap(display, d, width, height, depth) bind(c, name='XCreatePixmap')
+            ! Pixmap XCreatePixmap(Display *display, Drawable d, unsigned int width, unsigned int height, unsigned int depth)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: d
+            integer(kind=c_int),  intent(in), value :: width
+            integer(kind=c_int),  intent(in), value :: height
+            integer(kind=c_int),  intent(in), value :: depth
+            integer(kind=c_long)                    :: x_create_pixmap
+        end function x_create_pixmap
 
         function x_create_simple_window(display, parent, x, y, width, height, border_width, border, background) &
                 bind(c, name='XCreateSimpleWindow')
@@ -784,6 +796,23 @@ module xlib
             implicit none
             type(c_ptr), intent(in), value :: display
         end subroutine x_close_display
+
+        subroutine x_copy_area(display, src, dest, gc, src_x, src_y, width, height, dest_x, dest_y) &
+                bind(c, name='XCopyArea')
+            ! XCopyArea(Display *display, Drawable src, Drawable dest, GC gc, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y)
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: src
+            integer(kind=c_long), intent(in), value :: dest
+            type(c_ptr),          intent(in), value :: gc
+            integer(kind=c_int),  intent(in), value :: src_x
+            integer(kind=c_int),  intent(in), value :: src_y
+            integer(kind=c_int),  intent(in), value :: width
+            integer(kind=c_int),  intent(in), value :: height
+            integer(kind=c_int),  intent(in), value :: dest_x
+            integer(kind=c_int),  intent(in), value :: dest_y
+        end subroutine x_copy_area
 
         subroutine x_destroy_window(display, w) bind(c, name='XDestroyWindow')
             ! XDestroyWindow(Display *display; Window w)
