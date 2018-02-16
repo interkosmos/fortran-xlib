@@ -35,7 +35,7 @@ program main
     points(3)%x = 190
     points(3)%y = 290
 
-    ! Create window.
+    ! Open display.
     display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
@@ -79,10 +79,10 @@ program main
     do
         call x_next_event(display, event)
 
-        select case(event%type)
-            case(expose)
+        select case (event%type)
+            case (expose)
                 call draw()
-            case(client_message)
+            case (client_message)
                 exit
         end select
     end do

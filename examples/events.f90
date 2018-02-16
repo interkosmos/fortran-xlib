@@ -56,20 +56,20 @@ program main
         write(*, '(a)') 'waiting for event ...'
         call x_next_event(display, event)
 
-        select case(event%type)
-            case(expose)
+        select case (event%type)
+            case (expose)
                 write(*, *) 'Expose'
-            case(configure_notify)
+            case (configure_notify)
                 write(*, *) 'ConfigureNotify'
                 write(*, *) 'width:  ', event%x_configure%width
                 write(*, *) 'height: ', event%x_configure%height
-            case(client_message)
+            case (client_message)
                 write(*, *) 'ClientMessage'
                 l = transfer(event%x_client_message%data, l)
 
                 if (l(1) == wm_delete_window) &
                     exit
-            case(key_press)
+            case (key_press)
                 write(*, *) 'KeyPress'
         end select
     end do

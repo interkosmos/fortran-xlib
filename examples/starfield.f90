@@ -17,6 +17,9 @@ module starfield
 
     type(point), dimension(num_stars) :: stars
 
+    public :: init_stars
+    public :: move_stars
+
     contains
         subroutine init_stars()
             implicit none
@@ -88,7 +91,7 @@ program main
         end subroutine
     end interface
 
-    ! Create window.
+    ! Open display.
     display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
@@ -99,7 +102,7 @@ program main
     white = x_white_pixel(display, screen)
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, 400, 300, 5, white, black)
+    window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
