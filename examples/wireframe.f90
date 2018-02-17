@@ -132,11 +132,12 @@ module vector
         end function to_rad
 
         function rotate_x(v, angle) result(r)
+            !! Rotates vector in x.
             implicit none
             real, dimension(3), intent(in) :: v
             real,               intent(in) :: angle
-            real               :: rad
-            real, dimension(3) :: r
+            real                           :: rad
+            real, dimension(3)             :: r
 
             rad = to_rad(angle)
 
@@ -146,11 +147,12 @@ module vector
         end function rotate_x
 
         function rotate_y(v, angle) result(r)
+            !! Rotates vector in y.
             implicit none
             real, dimension(3), intent(in) :: v
             real,               intent(in) :: angle
-            real               :: rad
-            real, dimension(3) :: r
+            real                           :: rad
+            real, dimension(3)             :: r
 
             rad = to_rad(angle)
 
@@ -160,11 +162,12 @@ module vector
         end function rotate_y
 
         function rotate_z(v, angle) result(r)
+            !! Rotates vector in z.
             implicit none
             real, dimension(3), intent(in) :: v
             real,               intent(in) :: angle
-            real               :: rad
-            real, dimension(3) :: r
+            real                           :: rad
+            real, dimension(3)             :: r
 
             rad = to_rad(angle)
 
@@ -181,27 +184,29 @@ program main
     use :: xlib_types
     use :: object
     implicit none
-    type(c_ptr)                       :: display
-    type(c_ptr)                       :: gc
-    type(x_color)                     :: color
-    type(x_event)                     :: event
-    type(x_gc_values)                 :: values
-    type(x_size_hints)                :: size_hints
-    integer                           :: screen
-    integer                           :: rc
-    integer                           :: width  = 640
-    integer                           :: height = 480
-    integer(kind=8)                   :: root
-    integer(kind=8)                   :: colormap
-    integer(kind=8)                   :: double_buffer
-    integer(kind=8)                   :: black
-    integer(kind=8)                   :: white
-    integer(kind=8)                   :: window
-    integer(kind=8)                   :: wm_delete_window
-    integer(kind=8), dimension(5)     :: long
-    real                              :: angle_x, angle_y, angle_z
-    real, dimension(:,:), allocatable :: transformed
-    character(len=*), parameter       :: file_name = 'examples/tie.obj'
+    type(c_ptr)                        :: display
+    type(c_ptr)                        :: gc
+    type(x_color)                      :: color
+    type(x_event)                      :: event
+    type(x_gc_values)                  :: values
+    type(x_size_hints)                 :: size_hints
+    integer                            :: screen
+    integer                            :: rc
+    integer                            :: width             = 640
+    integer                            :: height            = 480
+    integer(kind=8)                    :: root
+    integer(kind=8)                    :: colormap
+    integer(kind=8)                    :: double_buffer
+    integer(kind=8)                    :: black
+    integer(kind=8)                    :: white
+    integer(kind=8)                    :: window
+    integer(kind=8)                    :: wm_delete_window
+    integer(kind=8), dimension(5)      :: long
+    real, dimension(:, :), allocatable :: transformed
+    real                               :: angle_x           = 0.0
+    real                               :: angle_y           = 0.0
+    real                               :: angle_z           = 0.0
+    character(len=*), parameter        :: file_name         = 'examples/tie.obj'
 
     interface
         subroutine usleep(useconds) bind(c)
@@ -260,11 +265,6 @@ program main
 
     ! Create double buffer.
     double_buffer = x_create_pixmap(display, window, width, height, 24)
-
-    ! Set the initial angles of the 3-D object.
-    angle_x = 0.0
-    angle_y = 0.0
-    angle_z = 0.0
 
     do
         rc = x_pending(display)
