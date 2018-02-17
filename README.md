@@ -1,10 +1,11 @@
 # f03xlib
-An `iso_c_binding` interface to Xlib for Fortran 2003/2008.
+An `iso_c_binding` interface to Xlib for Fortran 2003/2008. Currently, only a
+subset of Xlib is implemented.
 
 ## Build
 You can use the provided Makefile to compile everything. Build the interface with:
 ```
-$ make
+$ make xlib
 ```
 Or run your favourite Fortran compiler directly:
 ```
