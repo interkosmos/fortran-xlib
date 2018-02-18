@@ -5,29 +5,109 @@
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
-module object
-    !! Loads and stores a 3-D object.
+module vector
     implicit none
-    real,    dimension(:, :), allocatable :: vertices
-    integer, dimension(:, :), allocatable :: faces
+    real, parameter :: pi = acos(-1.0)
 
-    public :: load_file
+    public :: project
+    public :: rotate_x
+    public :: rotate_y
+    public :: rotate_z
+
+    type :: point2d
+        real :: x, y
+    end type point2d
+
+    type :: point3d
+        real :: x, y, z
+    end type point3d
 
     contains
-        subroutine load_file(file_name)
-            !! Loads a Wavefront OBJ file.
-            character(len=*), intent(in)          :: file_name       ! File name.
-            character(len=100)                    :: buffer          ! Line buffer.
-            character(len=1)                      :: str             ! Temporary string.
-            integer                               :: v_size, f_size  ! Array sizes.
-            integer                               :: stat            ! I/O status.
-            integer                               :: v1, v2          ! Vertice indices.
-            integer, parameter                    :: fh = 10         ! File handle.
-            real,    dimension(:, :), allocatable :: tmp_vertices    ! Temporary array for vertices.
-            integer, dimension(:, :), allocatable :: tmp_faces       ! Temporary array for faces.
+        type(point2d) function project(v, width, height, fov, distance) result(p)
+            !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
+            implicit none
+            type(point3d), intent(in) :: v
+            integer,       intent(in) :: width
+            integer,       intent(in) :: height
+            real,          intent(in) :: fov
+            real,          intent(in) :: distance
+            real                      :: f
 
-            allocate(vertices(1, 3))
-            allocate(faces(1, 2))
+            f = fov / (distance + v%z)
+            p%x = v%x * f + width / 2
+            p%y = -1 * v%y * f + height / 2
+        end function project
+
+        real function rad(deg)
+            !! Converts an angle from deg to rad.
+            implicit none
+            real, intent(in) :: deg
+
+            rad = deg * pi / 100
+        end function rad
+
+        type(point3d) function rotate_x(v, angle) result(r)
+            !! Rotates vector in x.
+            implicit none
+            type(point3d), intent(in) :: v
+            real,          intent(in) :: angle
+
+            r%x = v%x
+            r%y = v%y * cos(angle) - v%z * sin(angle)
+            r%z = v%z * sin(angle) + v%z * cos(angle)
+        end function rotate_x
+
+        type(point3d) function rotate_y(v, angle) result(r)
+            !! Rotates vector in y.
+            implicit none
+            type(point3d), intent(in) :: v
+            real,          intent(in) :: angle
+
+            r%x = v%z * sin(angle) + v%x * cos(angle)
+            r%y = v%y
+            r%z = v%z * cos(angle) - v%x * sin(angle)
+        end function rotate_y
+
+        type(point3d) function rotate_z(v, angle) result(r)
+            !! Rotates vector in z.
+            implicit none
+            type(point3d), intent(in) :: v
+            real,          intent(in) :: angle
+
+            r%x = v%x * cos(angle) - v%y * sin(angle)
+            r%y = v%x * sin(angle) - v%y * cos(angle)
+            r%z = v%z
+        end function rotate_z
+end module vector
+
+module obj
+    !! Loads and stores a 3-D object.
+    use :: vector
+    implicit none
+
+    type :: face
+        integer :: v1, v2
+    end type face
+
+    type(point3d), dimension(:), allocatable :: vertices
+    type(face),    dimension(:), allocatable :: faces
+
+    public :: load_obj_file
+
+    contains
+        subroutine load_obj_file(file_name)
+            !! Loads a Wavefront OBJ file.
+            character(len=*), intent(in)             :: file_name       ! File name.
+            character(len=100)                       :: buffer          ! Line buffer.
+            character(len=1)                         :: str             ! Temporary string.
+            integer                                  :: v_size, f_size  ! Array sizes.
+            integer                                  :: stat            ! I/O status.
+            integer, parameter                       :: fh = 10         ! File handle.
+            type(point3d), dimension(:), allocatable :: tmp_vertices    ! Temporary array for vertices.
+            type(face),    dimension(:), allocatable :: tmp_faces       ! Temporary array for faces.
+
+            allocate(vertices(1))
+            allocate(faces(1))
 
             open(unit=fh, file=file_name, action='read', iostat=stat)
 
@@ -40,28 +120,28 @@ module object
 
                     select case (buffer(1:1))
                         case ('v')
-                            ! Read the vertices.
-                            v_size = size(vertices, 1)
-                            allocate(tmp_vertices(v_size + 1, 3))
-                            tmp_vertices(1:v_size, :) = vertices
+                            ! Read vertice.
+                            v_size = size(vertices)
+                            allocate(tmp_vertices(v_size + 1))
+                            tmp_vertices(1:v_size) = vertices
 
                             read(buffer, *) &
                                 str, &
-                                tmp_vertices(v_size, 1), &
-                                tmp_vertices(v_size, 2), &
-                                tmp_vertices(v_size, 3)
+                                tmp_vertices(v_size)%x, &
+                                tmp_vertices(v_size)%y, &
+                                tmp_vertices(v_size)%z
 
                             call move_alloc(tmp_vertices, vertices)
                         case ('f')
-                            ! Read the faces.
-                            f_size = size(faces, 1)
-                            allocate(tmp_faces(f_size + 1, 2))
-                            tmp_faces(1:f_size, :) = faces
+                            ! Read face.
+                            f_size = size(faces)
+                            allocate(tmp_faces(f_size + 1))
+                            tmp_faces(1:f_size) = faces
 
                             read(buffer, *) &
                                 str, &
-                                tmp_faces(f_size, 1), &
-                                tmp_faces(f_size, 2)
+                                tmp_faces(f_size)%v1, &
+                                tmp_faces(f_size)%v2
 
                             call move_alloc(tmp_faces, faces)
                         case default
@@ -82,131 +162,51 @@ module object
                 deallocate(tmp_faces)
 
             ! Actual array sizes.
-            v_size = size(vertices, 1) - 1
-            f_size = size(faces, 1) - 1
+            v_size = size(vertices) - 1
+            f_size = size(faces) - 1
 
-            allocate(tmp_vertices(v_size, 3))
-            allocate(tmp_faces(f_size, 2))
+            allocate(tmp_vertices(v_size))
+            allocate(tmp_faces(f_size))
 
-            tmp_vertices = vertices(1:v_size, :)
-            tmp_faces    = faces(1:f_size, :)
+            tmp_vertices = vertices(1:v_size)
+            tmp_faces    = faces(1:f_size)
 
             call move_alloc(tmp_vertices, vertices)
             call move_alloc(tmp_faces, faces)
-        end subroutine load_file
-end module object
-
-module vector
-    implicit none
-    real, parameter :: pi = acos(-1.0)
-
-    public :: project
-    public :: rotate_x
-    public :: rotate_y
-    public :: rotate_z
-
-    contains
-        function project(v, width, height, fov, distance) result(p)
-            !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
-            implicit none
-            real, dimension(3), intent(in) :: v
-            integer,            intent(in) :: width
-            integer,            intent(in) :: height
-            real,               intent(in) :: fov
-            real,               intent(in) :: distance
-            real                           :: f
-            real, dimension(2)             :: p
-
-            f = fov / (distance + v(3))
-            p(1) = v(1) * f + width / 2
-            p(2) = -1 * v(2) * f + height / 2
-        end function project
-
-        function to_rad(angle) result(rad)
-            !! Converts an angle from deg to rad.
-            implicit none
-            real, intent(in) :: angle
-            real             :: rad
-
-            rad = angle * pi / 100
-        end function to_rad
-
-        function rotate_x(v, angle) result(r)
-            !! Rotates vector in x.
-            implicit none
-            real, dimension(3), intent(in) :: v
-            real,               intent(in) :: angle
-            real                           :: rad
-            real, dimension(3)             :: r
-
-            rad = to_rad(angle)
-
-            r(1) = v(1)
-            r(2) = v(2) * cos(rad) - v(3) * sin(rad)
-            r(3) = v(2) * sin(rad) + v(3) * cos(rad)
-        end function rotate_x
-
-        function rotate_y(v, angle) result(r)
-            !! Rotates vector in y.
-            implicit none
-            real, dimension(3), intent(in) :: v
-            real,               intent(in) :: angle
-            real                           :: rad
-            real, dimension(3)             :: r
-
-            rad = to_rad(angle)
-
-            r(1) = v(3) * sin(rad) + v(1) * cos(rad)
-            r(2) = v(2)
-            r(3) = v(3) * cos(rad) - v(1) * sin(rad)
-        end function rotate_y
-
-        function rotate_z(v, angle) result(r)
-            !! Rotates vector in z.
-            implicit none
-            real, dimension(3), intent(in) :: v
-            real,               intent(in) :: angle
-            real                           :: rad
-            real, dimension(3)             :: r
-
-            rad = to_rad(angle)
-
-            r(1) = v(1) * cos(rad) - v(2) * sin(rad)
-            r(2) = v(1) * sin(rad) - v(2) * cos(rad)
-            r(3) = v(3)
-        end function rotate_z
-end module vector
+        end subroutine load_obj_file
+end module obj
 
 program main
     use, intrinsic :: iso_c_binding
     use :: xlib
     use :: xlib_consts
     use :: xlib_types
-    use :: object
+    use :: obj
+    use :: vector
     implicit none
-    type(c_ptr)                        :: display
-    type(c_ptr)                        :: gc
-    type(x_color)                      :: color
-    type(x_event)                      :: event
-    type(x_gc_values)                  :: values
-    type(x_size_hints)                 :: size_hints
-    integer                            :: screen
-    integer                            :: rc
-    integer                            :: width             = 640
-    integer                            :: height            = 480
-    integer(kind=8)                    :: root
-    integer(kind=8)                    :: colormap
-    integer(kind=8)                    :: double_buffer
-    integer(kind=8)                    :: black
-    integer(kind=8)                    :: white
-    integer(kind=8)                    :: window
-    integer(kind=8)                    :: wm_delete_window
-    integer(kind=8), dimension(5)      :: long
-    real, dimension(:, :), allocatable :: transformed
-    real                               :: angle_x           = 0.0
-    real                               :: angle_y           = 0.0
-    real                               :: angle_z           = 0.0
-    character(len=*), parameter        :: file_name         = 'examples/tie.obj'
+    type(c_ptr)                              :: display
+    type(c_ptr)                              :: gc
+    type(x_color)                            :: color
+    type(x_event)                            :: event
+    type(x_gc_values)                        :: values
+    type(x_size_hints)                       :: size_hints
+    integer                                  :: screen
+    integer                                  :: rc
+    integer                                  :: width             = 640
+    integer                                  :: height            = 480
+    integer(kind=8)                          :: root
+    integer(kind=8)                          :: colormap
+    integer(kind=8)                          :: double_buffer
+    integer(kind=8)                          :: black
+    integer(kind=8)                          :: white
+    integer(kind=8)                          :: window
+    integer(kind=8)                          :: wm_delete_window
+    integer(kind=8), dimension(5)            :: long
+    type(point2d), dimension(:), allocatable :: transformed
+    real                                     :: angle_x           = 0.0
+    real                                     :: angle_y           = 0.0
+    real                                     :: angle_z           = 0.0
+    character(len=*), parameter              :: file_name         = 'examples/tie.obj'
 
     interface
         subroutine usleep(useconds) bind(c)
@@ -217,7 +217,7 @@ program main
         end subroutine
     end interface
 
-    call load_file(file_name)
+    call load_obj_file(file_name)
 
     if (.not. allocated(vertices) .or. .not. allocated(faces)) &
         call exit(0)
@@ -232,10 +232,10 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'gold' // c_null_char, color, color)
+    rc = x_alloc_named_color(display, colormap, 'teal' // c_null_char, color, color)
 
     if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocated "gold" colour.'
+        print *, 'XAllocNamedColor failed to allocate "teal" colour.'
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
@@ -289,8 +289,8 @@ program main
             angle_y = angle_y + 1.0
             ! angle_z = angle_z + 1.0
 
-            call usleep(int(25000, c_int32_t))
             call draw()
+            call microsleep(25000)
         end if
     end do
 
@@ -300,6 +300,14 @@ program main
     call x_close_display(display)
 
     contains
+        subroutine microsleep(t)
+            !! Wrapper for usleep.
+            implicit none
+            integer, intent(in) :: t
+
+            call usleep(int(t, c_int32_t))
+        end subroutine microsleep
+
         subroutine draw()
             !! Draws the double buffer on the screen.
             implicit none
@@ -308,29 +316,29 @@ program main
 
         subroutine update(angle_x, angle_y, angle_z)
             !! Rotates the 3-D object.
-            use :: vector
             implicit none
-            real, intent(in)   :: angle_x
-            real, intent(in)   :: angle_y
-            real, intent(in)   :: angle_z
-            real, dimension(3) :: v
-            integer            :: i
+            real, intent(in) :: angle_x
+            real, intent(in) :: angle_y
+            real, intent(in) :: angle_z
+            type(point3d)    :: v
+            integer          :: i
 
             if (.not. allocated(transformed)) &
-                allocate(transformed(size(vertices, 1), 2))
+                allocate(transformed(size(vertices)))
 
             do i = 1, size(vertices, 1)
-                v = vertices(i,:)
-                v = rotate_x(v, angle_x)
-                v = rotate_y(v, angle_y)
-                v = rotate_z(v, angle_z)
-                transformed(i, :) = project(v, width, height, 256.0, 8.0)
+                v = vertices(i)
+                v = rotate_x(v, rad(angle_x))
+                v = rotate_y(v, rad(angle_y))
+                v = rotate_z(v, rad(angle_z))
+                transformed(i) = project(v, width, height, 256.0, 8.0)
             end do
         end subroutine update
 
         subroutine render()
             !! Renders the scene on the double buffer.
             implicit none
+            integer :: x1, y1, x2, y2
             integer :: i
 
             call x_set_foreground(display, gc, black)
@@ -338,10 +346,12 @@ program main
             call x_set_foreground(display, gc, color%pixel)
 
             do i = 1, size(faces, 1)
-                call x_draw_line(display, double_buffer, gc, int(transformed(faces(i, 1), 1)), &
-                                                             int(transformed(faces(i, 1), 2)), &
-                                                             int(transformed(faces(i, 2), 1)), &
-                                                             int(transformed(faces(i, 2), 2)))
+                x1 = int(transformed(faces(i)%v1)%x)
+                y1 = int(transformed(faces(i)%v1)%y)
+                x2 = int(transformed(faces(i)%v2)%x)
+                y2 = int(transformed(faces(i)%v2)%y)
+
+                call x_draw_line(display, double_buffer, gc, x1, y1, x2, y2)
             end do
         end subroutine render
 end program main

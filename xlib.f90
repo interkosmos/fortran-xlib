@@ -634,9 +634,9 @@ module xlib
     implicit none
 
     interface
+        ! Status XAllocNamedColor(Display *display, Colormap colormap, char *color_name, XColor *screen_def_return, XColor *exact_def_return)
         function x_alloc_named_color(display, colormap, color_name, screen_def_return, exact_def_return) &
                 bind(c, name='XAllocNamedColor')
-            ! Status XAllocNamedColor(Display *display, Colormap colormap, char *color_name, XColor *screen_def_return, XColor *exact_def_return)
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
@@ -648,16 +648,16 @@ module xlib
             integer(kind=c_int)                       :: x_alloc_named_color
         end function x_alloc_named_color
 
+        ! XSizeHints *XAllocSizeHints()
         function x_alloc_size_hints() bind(c, name='XAllocSizeHints')
-            ! XSizeHints *XAllocSizeHints()
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
             type(x_size_hints) :: x_alloc_size_hints
         end function x_alloc_size_hints
 
+        ! unsigned long XBlackPixel(Display *display, int screen_number)
         function x_black_pixel(display, screen_number) bind(c, name='XBlackPixel')
-            ! unsigned long XBlackPixel(Display *display, int screen_number)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),         intent(in), value :: display
@@ -665,8 +665,8 @@ module xlib
             integer(kind=c_long)                   :: x_black_pixel
         end function x_black_pixel
 
+        ! GC XCreateGC(Display *display, Drawable d, unsigned long valuemask, XGCValues *values)
         function x_create_gc(display, d, value_mask, values) bind(c, name='XCreateGC')
-            ! GC XCreateGC(Display *display, Drawable d, unsigned long valuemask, XGCValues *values)
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
@@ -677,8 +677,8 @@ module xlib
             type(c_ptr)                             :: x_create_gc
         end function x_create_gc
 
+        ! Pixmap XCreatePixmap(Display *display, Drawable d, unsigned int width, unsigned int height, unsigned int depth)
         function x_create_pixmap(display, d, width, height, depth) bind(c, name='XCreatePixmap')
-            ! Pixmap XCreatePixmap(Display *display, Drawable d, unsigned int width, unsigned int height, unsigned int depth)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -689,9 +689,9 @@ module xlib
             integer(kind=c_long)                    :: x_create_pixmap
         end function x_create_pixmap
 
+        ! Window XCreateSimpleWindow(Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background)
         function x_create_simple_window(display, parent, x, y, width, height, border_width, border, background) &
                 bind(c, name='XCreateSimpleWindow')
-            ! Window XCreateSimpleWindow(Display *display, Window parent, int x, int y, unsigned int width, unsigned int height, unsigned int border_width, unsigned long border, unsigned long background)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -706,8 +706,8 @@ module xlib
             integer(kind=c_long)                    :: x_create_simple_window
         end function x_create_simple_window
 
+        ! Colormap XDefaultColormap(Display *display, int screen_number)
         function x_default_colormap(display, screen_number) bind(c, name='XDefaultColormap')
-            ! Colormap XDefaultColormap(Display *display, int screen_number)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -715,30 +715,30 @@ module xlib
             integer(kind=c_long)                    :: x_default_colormap
         end function x_default_colormap
 
+        ! Window XDefaultRootWindow(Display *display)
         function x_default_root_window(display) bind(c, name='XDefaultRootWindow')
-            ! Window XDefaultRootWindow(Display *display)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: display
             integer(kind=c_long)           :: x_default_root_window
         end function x_default_root_window
 
+        ! int XDefaultScreen(Display *display)
         function x_default_screen(display) bind(c, name='XDefaultScreen')
-            ! int XDefaultScreen(Display *display)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: display
             integer(kind=c_int)            :: x_default_screen
         end function x_default_screen
 
+        ! Status XInitThreads()
         function x_init_threads() bind(c, name='XInitThreads')
-            ! Status XInitThreads()
             use, intrinsic :: iso_c_binding
             integer(c_int) :: x_init_threads
         end function
 
+        ! Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
         function x_intern_atom(display, atom_name, only_if_exists) bind(c, name='XInternAtom')
-            ! Atom XInternAtom(Display *display, char *atom_name, Bool only_if_exists)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),            intent(in), value :: display
@@ -747,23 +747,23 @@ module xlib
             integer(kind=c_long)                      :: x_intern_atom
         end function x_intern_atom
 
+        ! Display *XOpenDisplay (char *display_name)
         function x_open_display(display_name) bind(c, name='XOpenDisplay')
-            ! Display *XOpenDisplay (char *display_name)
             use, intrinsic :: iso_c_binding
             implicit none
             character(kind=c_char, len=1), intent(in) :: display_name
             type(c_ptr)                               :: x_open_display
         end function x_open_display
 
+        ! int XPending(Display *display)
         function x_pending(display) bind(c, name='XPending')
-            ! int XPending(Display *display)
             use, intrinsic :: iso_c_binding
             type(c_ptr), intent(in), value :: display
             integer(kind=c_int)            :: x_pending
         end function x_pending
 
+        ! Status XSetWMProtocols(Display *display, Window w, Atom *protocols, int count)
         function x_set_wm_protocols(display, w, protocols, count) bind(c, name='XSetWMProtocols')
-            ! Status XSetWMProtocols(Display *display, Window w, Atom *protocols, int count)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -773,8 +773,8 @@ module xlib
             integer(kind=c_int)                     :: x_set_wm_protocols
         end function x_set_wm_protocols
 
+        ! unsigned long XWhitePixel(Display *display, int screen_number)
         function x_white_pixel(display, screen_number) bind(c, name='XWhitePixel')
-            ! unsigned long XWhitePixel(Display *display, int screen_number)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),         intent(in), value :: display
@@ -782,24 +782,24 @@ module xlib
             integer(kind=c_long)                   :: x_white_pixel
         end function x_white_pixel
 
+        ! XClearWindow(Display *display, Window w)
         subroutine x_clear_window(display, w) bind(c, name='XClearWindow')
-            ! XClearWindow(Display *display, Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
             integer(kind=c_long), intent(in), value :: w
         end subroutine x_clear_window
 
+        ! XCloseDisplay(Display *display)
         subroutine x_close_display(display) bind(c, name='XCloseDisplay')
-            ! XCloseDisplay(Display *display)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: display
         end subroutine x_close_display
 
+        ! XCopyArea(Display *display, Drawable src, Drawable dest, GC gc, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y)
         subroutine x_copy_area(display, src, dest, gc, src_x, src_y, width, height, dest_x, dest_y) &
                 bind(c, name='XCopyArea')
-            ! XCopyArea(Display *display, Drawable src, Drawable dest, GC gc, int src_x, int src_y, unsigned int width, unsigned int height, int dest_x, int dest_y)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -814,16 +814,16 @@ module xlib
             integer(kind=c_int),  intent(in), value :: dest_y
         end subroutine x_copy_area
 
+        ! XDestroyWindow(Display *display; Window w)
         subroutine x_destroy_window(display, w) bind(c, name='XDestroyWindow')
-            ! XDestroyWindow(Display *display; Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
             integer(kind=c_long), intent(in), value :: w
         end subroutine x_destroy_window
 
+        ! XDrawArc(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
         subroutine x_draw_arc(display, d, gc, x, y, width, height, angle1, angle2) bind(c, name='XDrawArc')
-            ! XDrawArc(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -837,8 +837,8 @@ module xlib
             integer(kind=c_int),  intent(in), value :: angle2
         end subroutine x_draw_arc
 
+        ! XDrawLine(Display *display, Drawable d, GC gc, int x1, int y1, int x2, int y2)
         subroutine x_draw_line(display, d, gc, x1, y1, x2, y2) bind(c, name='XDrawLine')
-            ! XDrawLine(Display *display, Drawable d, GC gc, int x1, int y1, int x2, int y2)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -850,8 +850,8 @@ module xlib
             integer(kind=c_int),  intent(in), value :: y2
         end subroutine x_draw_line
 
+        ! XDrawPoint(Display *display, Drawable d, GC gc, int x, int y)
         subroutine x_draw_point(display, d, gc, x, y) bind(c, name='XDrawPoint')
-            ! XDrawPoint(Display *display, Drawable d, GC gc, int x, int y)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -861,8 +861,8 @@ module xlib
             integer(kind=c_int),  intent(in), value :: y
         end subroutine x_draw_point
 
+        ! XDrawRectangle(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height)
         subroutine x_draw_rectangle(display, d, gc, x, y, width, height) bind(c, name='XDrawRectangle')
-            ! XDrawRectangle(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -874,8 +874,8 @@ module xlib
             integer(kind=c_int),  intent(in), value :: height
         end subroutine x_draw_rectangle
 
+        ! XFillArc(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
         subroutine x_fill_arc(display, d, gc, x, y, width, height, angle1, angle2) bind(c, name='XFillArc')
-            ! XFillArc(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -889,8 +889,8 @@ module xlib
             integer(kind=c_int),  intent(in), value :: angle2
         end subroutine x_fill_arc
 
+        ! XFillPolygon(Display *display, Drawable d, GC gc, XPoint *points, int npoints, int shape, int mode)
         subroutine x_fill_polygon(display, d, gc, points, npoints, shape, mode) bind(c, name='XFillPolygon')
-            ! XFillPolygon(Display *display, Drawable d, GC gc, XPoint *points, int npoints, int shape, int mode)
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
@@ -903,8 +903,8 @@ module xlib
             integer(kind=c_int),                intent(in), value :: mode
         end subroutine x_fill_polygon
 
+        ! XFillRectangle(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height)
         subroutine x_fill_rectangle(display, d, gc, x, y, width, height) bind(c, name='XFillRectangle')
-            ! XFillRectangle(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -916,22 +916,22 @@ module xlib
             integer(kind=c_int),  intent(in), value :: height
         end subroutine x_fill_rectangle
 
+        ! XFlush(Display *display)
         subroutine x_flush(display) bind(c, name='XFlush')
-            ! XFlush(Display *display)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: display
         end subroutine x_flush
 
+        ! XFree(void *data)
         subroutine x_free(data) bind(c, name='XFree')
-            ! XFree(void *data)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: data
         end subroutine x_free
 
+        ! XFreeColors(Display *display, Colormap colormap, unsigned long pixels[], int npixels, unsigned long planes)
         subroutine x_free_colors(display, colormap, pixels, npixels, planes) bind(c, name='XFreeColors')
-            ! XFreeColors(Display *display, Colormap colormap, unsigned long pixels[], int npixels, unsigned long planes)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),                        intent(in), value :: display
@@ -941,24 +941,24 @@ module xlib
             integer(kind=c_long),               intent(in), value :: planes
         end subroutine x_free_colors
 
+        ! XFreeGC(Display *display, GC gc)
         subroutine x_free_gc(display, gc) bind(c, name='XFreeGC')
-            ! XFreeGC(Display *display, GC gc)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr), intent(in), value :: display
             type(c_ptr), intent(in), value :: gc
         end subroutine x_free_gc
 
+        ! XMapWindow(Display *display, Window w)
         subroutine x_map_window(display, w) bind(c, name='XMapWindow')
-            ! XMapWindow(Display *display, Window w)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
             integer(kind=c_long), intent(in), value :: w
         end subroutine
 
+        ! XNextEvent(Display *display, XEvent *event_return)
         subroutine x_next_event_(display, event_return) bind(c, name='XNextEvent')
-            ! XNextEvent(Display *display, XEvent *event_return)
             use, intrinsic :: iso_c_binding
             use xlib_types
             implicit none
@@ -966,8 +966,8 @@ module xlib
             type(x_event), intent(inout)     :: event_return
         end subroutine x_next_event_
 
+        ! XSelectInput(Display *display, Window w, long event_mask)
         subroutine x_select_input(display, w, event_mask) bind(c, name='XSelectInput')
-            ! XSelectInput(Display *display, Window w, long event_mask)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -975,8 +975,8 @@ module xlib
             integer(kind=c_long), intent(in), value :: event_mask
         end subroutine
 
+        ! XSetBackground(Display *display, GC gc, unsigned long background)
         subroutine x_set_background(display, gc, background) bind(c, name='XSetBackground')
-            ! XSetBackground(Display *display, GC gc, unsigned long background)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -984,8 +984,8 @@ module xlib
             integer(kind=c_long), intent(in), value :: background
         end subroutine x_set_background
 
+        ! XSetFillStyle(Display *display, GC gc, int fill_style)
         subroutine x_set_fill_style(display, gc, fill_style) bind(c, name='XSetFillStyle')
-            ! XSetFillStyle(Display *display, GC gc, int fill_style)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),         intent(in), value :: display
@@ -993,9 +993,9 @@ module xlib
             integer(kind=c_int), intent(in), value :: fill_style
         end subroutine x_set_fill_style
 
+        ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style, int cap_style, int join_style)
         subroutine x_set_line_attributes(display, gc, line_width, line_style, cap_style, join_style) &
                 bind(c, name='XSetLineAttributes')
-            ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style, int cap_style, int join_style)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),         intent(in), value :: display
@@ -1006,8 +1006,8 @@ module xlib
             integer(kind=c_int), intent(in), value :: join_style
         end subroutine x_set_line_attributes
 
+        ! XSetForeground(Display *display, GC gc, unsigned long foreground)
         subroutine x_set_foreground(display, gc, foreground) bind(c, name='XSetForeground')
-            ! XSetForeground(Display *display, GC gc, unsigned long foreground)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -1015,8 +1015,8 @@ module xlib
             integer(kind=c_long), intent(in), value :: foreground
         end subroutine x_set_foreground
 
+        ! XSetWMNormalHints(Display *display, Window w, XSizeHints *hints)
         subroutine x_set_wm_normal_hints(display, w, hints) bind(c, name='XSetWMNormalHints')
-            ! XSetWMNormalHints(Display *display, Window w, XSizeHints *hints)
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
@@ -1025,17 +1025,17 @@ module xlib
             type(x_size_hints),   intent(in)        :: hints
         end subroutine x_set_wm_normal_hints
 
+        ! XStoreName(Display *display, Window w, char *window_name)
         subroutine x_store_name(display, w, window_name) bind(c, name='XStoreName')
-            ! XStoreName(Display *display, Window w, char *window_name)
             use, intrinsic :: iso_c_binding
             implicit none
-            type(c_ptr),                   intent(in), value :: display
-            integer(kind=c_long),          intent(in), value :: w
-            character(kind=c_char, len=1), intent(in)        :: window_name
+            type(c_ptr),            intent(in), value :: display
+            integer(kind=c_long),   intent(in), value :: w
+            character(kind=c_char), intent(in)        :: window_name
         end subroutine x_store_name
 
+        ! XSync(Display *display, Bool discard)
         subroutine x_sync(display, discard) bind(c, name='XSync')
-            ! XSync(Display *display, Bool discard)
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
@@ -1054,29 +1054,28 @@ module xlib
             call x_next_event_(display, event_return)
 
             select case(event_return%type)
-                case(button_press)
-                    ! XButtonEvent
+                case(button_press)      ! XButtonEvent
                     event_return%x_button = transfer(event_return, event_return%x_button)
-                case(button_release)
-                    ! XButtonEvent
+
+                case(button_release)    ! XButtonEvent
                     event_return%x_button = transfer(event_return, event_return%x_button)
-                case(client_message)
-                    ! XClientMessageEvent
+
+                case(client_message)    ! XClientMessageEvent
                     event_return%x_client_message = transfer(event_return, event_return%x_client_message)
-                case(configure_notify)
-                    ! XConfigureNotifyEvent
+
+                case(configure_notify)  ! XConfigureNotifyEvent
                     event_return%x_configure = transfer(event_return, event_return%x_configure)
-                case(expose)
-                    ! XExposeEvent
+
+                case(expose)            ! XExposeEvent
                     event_return%x_expose = transfer(event_return, event_return%x_expose)
-                case(key_press)
-                    ! XKeyEvent
+
+                case(key_press)         ! XKeyEvent
                     event_return%x_key = transfer(event_return, event_return%x_key)
-                case(key_release)
-                    ! XKeyEvent
+
+                case(key_release)       ! XKeyEvent
                     event_return%x_key = transfer(event_return, event_return%x_key)
-                case(motion_notify)
-                    ! XMotionEvent
+
+                case(motion_notify)     ! XMotionEvent
                     event_return%x_motion= transfer(event_return, event_return%x_motion)
             end select
         end subroutine x_next_event
