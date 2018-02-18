@@ -17,11 +17,11 @@ $ gfortran8 -c xlib.f90
 
 Example programmes utilising the interface can be found in the directory `examples`:
 
-* `window.f90` displays a simple window.
-* `events.f90` captures X11 events.
-* `drawing.f90` draws some shapes on the window.
-* `starfield.f90` flys through a starfield.
-* `wireframe.f90` renders a wire-frame model of a Tie Fighter.
+* **window** displays a simple window.
+* **events** captures X11 events.
+* **drawing** draws some shapes on the window.
+* **starfield** flys through a starfield.
+* **wireframe** renders a wire-frame model of a Tie Fighter.
 
 Build them with BSD make:
 ```
