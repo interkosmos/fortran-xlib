@@ -7,21 +7,19 @@
 module starfield
     implicit none
     integer, parameter :: num_stars = 64
-    integer, parameter :: max_depth = 256
+    integer, parameter :: max_depth = 512
 
-    type :: point
-        real :: x
-        real :: y
-        real :: z
-    end type point
+    type :: point3d
+        real :: x, y, z
+    end type point3d
 
-    type(point), dimension(num_stars) :: stars
+    type(point3d), dimension(num_stars) :: stars
 
-    public :: init_stars
-    public :: move_stars
+    public :: init
+    public :: move
 
     contains
-        subroutine init_stars()
+        subroutine init()
             implicit none
             integer :: i
             integer :: x, y, z
@@ -32,13 +30,13 @@ module starfield
                 call random_number(r2)
                 call random_number(r3)
 
-                stars(i)%x = 50.0 - (r1 * 100.0)
-                stars(i)%y = 50.0 - (r2 * 100.0)
+                stars(i)%x = 100.0 - (r1 * 200.0)
+                stars(i)%y = 100.0 - (r2 * 200.0)
                 stars(i)%z = r3 * max_depth
             end do
-        end subroutine init_stars
+        end subroutine init
 
-        subroutine move_stars()
+        subroutine move()
             implicit none
             integer :: i
             real    :: r1, r2
@@ -50,12 +48,12 @@ module starfield
                     call random_number(r1)
                     call random_number(r2)
 
-                    stars(i)%x = 50.0 - (r1 * 100.0)
-                    stars(i)%y = 50.0 - (r2 * 100.0)
+                    stars(i)%x = 100.0 - (r1 * 200.0)
+                    stars(i)%y = 100.0 - (r2 * 200.0)
                     stars(i)%z = max_depth
                 end if
             end do
-        end subroutine move_stars
+        end subroutine move
 end module starfield
 
 program main
@@ -79,6 +77,7 @@ program main
     integer(kind=8)               :: black
     integer(kind=8)               :: white
     integer(kind=8)               :: window
+    integer(kind=8)               :: double_buffer
     integer(kind=8)               :: wm_delete_window
     integer(kind=8), dimension(5) :: long
 
@@ -120,15 +119,20 @@ program main
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)
 
+    ! Create double buffer.
+    double_buffer = x_create_pixmap(display, window, width, height, 24)
+
     call x_set_background(display, gc, black)
     call x_set_foreground(display, gc, white)
+
+    call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height)
 
     ! Show window.
     call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
     call x_map_window(display, window)
 
     ! Init the starfield.
-    call init_stars()
+    call init()
 
     do
         rc = x_pending(display)
@@ -144,19 +148,29 @@ program main
                         exit
             end select
 
-            call move_stars()
+            call move()
+            call render()
             call draw()
-            call usleep(int(5000, c_int32_t)) ! Sleep for 5 ms.
+            call microsleep(1000)
         end if
     end do
 
     ! Clean up and close window.
+    call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
 
     contains
-        subroutine draw()
+        subroutine microsleep(t)
+            !! Wrapper for usleep.
+            implicit none
+            integer, intent(in) :: t
+
+            call usleep(int(t, c_int32_t))
+        end subroutine microsleep
+
+        subroutine render()
             implicit none
             integer :: origin_x
             integer :: origin_y
@@ -168,7 +182,8 @@ program main
             origin_y = height / 2
 
             call x_set_foreground(display, gc, black)
-            call x_fill_rectangle(display, window, gc, 0, 0, width, height)
+            call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height)
+
             call x_set_foreground(display, gc, white)
 
             do i = 1, size(stars)
@@ -176,7 +191,11 @@ program main
                 x = int(stars(i)%x * k + origin_x)
                 y = int(stars(i)%y * k + origin_y)
 
-                call x_draw_point(display, window, gc, x, y)
+                call x_draw_point(display, double_buffer, gc, x, y)
             end do
+        end subroutine render
+
+        subroutine draw()
+            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
         end subroutine draw
 end program main
