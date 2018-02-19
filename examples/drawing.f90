@@ -62,7 +62,7 @@ program main
        print *, 'XAllocNamedColor failed to allocate "Turquoise" colour.'
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, 400, 300, 5, black, white)
+    window = x_create_simple_window(display, root, 0, 0, 400, 300, 0, black, white)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)

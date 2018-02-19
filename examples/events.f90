@@ -33,7 +33,7 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    window = x_create_simple_window(display, root, 0, 0, 300, 200, 5, black, white)
+    window = x_create_simple_window(display, root, 0, 0, 300, 200, 0, black, white)
 
     ! Set window title.
     call x_store_name(display, window, 'Fortran' // c_null_char)

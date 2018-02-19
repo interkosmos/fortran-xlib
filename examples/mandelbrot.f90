@@ -1,6 +1,6 @@
 ! mandelbrot.f90
 !
-! Example that draws the mandelbrot set.
+! Example that shows the drawing of the Mandelbrot set.
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
@@ -46,7 +46,7 @@ program main
     rc = x_alloc_named_color(display, colormap, 'Purple' // c_null_char, purple, purple)
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
+    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)

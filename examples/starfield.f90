@@ -101,7 +101,7 @@ program main
     white = x_white_pixel(display, screen)
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
+    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
@@ -171,6 +171,7 @@ program main
         end subroutine microsleep
 
         subroutine render()
+            !! Renders the stars.
             implicit none
             integer :: origin_x
             integer :: origin_y
@@ -196,6 +197,7 @@ program main
         end subroutine render
 
         subroutine draw()
+            !! Copies double buffer to window.
             call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
         end subroutine draw
 end program main

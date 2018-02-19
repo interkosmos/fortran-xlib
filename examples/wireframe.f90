@@ -238,7 +238,7 @@ program main
         print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
+    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
@@ -295,6 +295,7 @@ program main
     end do
 
     ! Clean up and close window.
+    call x_free_colors(display, colormap, (/ color%pixel /), 1, int8(0))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
@@ -308,12 +309,6 @@ program main
 
             call usleep(int(t, c_int32_t))
         end subroutine microsleep
-
-        subroutine draw()
-            !! Draws the double buffer on the screen.
-            implicit none
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
-        end subroutine draw
 
         subroutine update(angle_x, angle_y, angle_z)
             !! Rotates the 3-D object.
@@ -355,4 +350,9 @@ program main
                 call x_draw_line(display, double_buffer, gc, x1, y1, x2, y2)
             end do
         end subroutine render
+
+        subroutine draw()
+            !! Copies double buffer to window.
+            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
+        end subroutine draw
 end program main

@@ -30,7 +30,7 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    window = x_create_simple_window(display, root, 0, 0, width, height, 5, black, white)
+    window = x_create_simple_window(display, root, 0, 0, width, height, 0, black, white)
 
     ! Prevent resizing.
     size_hints%flags      = ior(p_min_size, p_max_size)
