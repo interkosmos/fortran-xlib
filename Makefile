@@ -1,18 +1,22 @@
-FC        = gfortran8
-CFLAGS    = -fcheck=all -ffast-math -funroll-loops -Ofast -march=native -Wl,-rpath=/usr/local/lib/gcc8/
-LDFLAGS   = -I/usr/local/include/ -L/usr/local/lib/
-LIBS      = -lX11
-SOURCE    = xlib.f90
-OBJ       = xlib.o
+FC         = gfortran8
+CFLAGS     = -fcheck=all -ffast-math -funroll-loops -Ofast -march=native -Wl,-rpath=/usr/local/lib/gcc8/
+LDFLAGS    = -I/usr/local/include/ -L/usr/local/lib/
+LIBS       = -lX11
+SOURCE     = xlib.f90
+OBJ        = xlib.o
 
-DIR       = examples
-WINDOW    = window
-EVENTS    = events
-DRAWING   = drawing
-STARFIELD = starfield
-WIREFRAME = wireframe
+DIR        = examples
+
+WINDOW     = window
+EVENTS     = events
+DRAWING    = drawing
+STARFIELD  = starfield
+WIREFRAME  = wireframe
+MANDELBROT = mandelbrot
 
 all: $(OBJ)
+
+xlib: $(OBJ)
 
 $(OBJ):
 	$(FC) -c $(SOURCE)
@@ -32,7 +36,10 @@ $(STARFIELD): $(DIR)/$*.f90 $(OBJ)
 $(WIREFRAME): $(DIR)/$*.f90 $(OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
+$(MANDELBROT): $(DIR)/$*.f90 $(OBJ)
+	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
+
 .PHONY: clean
 
 clean:
-	rm *.mod $(OBJ) $(WINDOW) $(EVENTS) $(DRAWING) $(STARFIELD)
+	rm *.mod $(OBJ) $(WINDOW) $(EVENTS) $(DRAWING) $(STARFIELD) $(WIREFRAME) $(MANDELBROT)

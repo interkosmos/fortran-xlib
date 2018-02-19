@@ -22,6 +22,7 @@ Example programmes utilising the interface can be found in the directory `exampl
 * **drawing** draws some shapes on the window.
 * **starfield** flys through a starfield.
 * **wireframe** renders a wire-frame model of a Tie Fighter.
+* **mandelbrot** draws a Mandelbrot set.
 
 Build them with BSD make:
 ```
@@ -30,6 +31,7 @@ $ make events
 $ make drawing
 $ make starfield
 $ make wireframe
+$ make mandelbrot
 ```
 
 Without BSD make, compile the examples manually, for instance:
