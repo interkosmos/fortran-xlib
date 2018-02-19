@@ -1,4 +1,4 @@
-# f03xli2
+# f03xlib
 An `iso_c_binding` interface to Xlib for Fortran 2003/2008. Currently, only a
 subset of Xlib is implemented.
 
