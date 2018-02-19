@@ -949,6 +949,14 @@ module xlib
             type(c_ptr), intent(in), value :: gc
         end subroutine x_free_gc
 
+        ! XFreePixmap(Display *display, Pixmap pixmap)
+        subroutine x_free_pixmap(display, pixmap) bind(c, name='XFreePixmap')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: pixmap
+        end subroutine x_free_pixmap
+
         ! XMapWindow(Display *display, Window w)
         subroutine x_map_window(display, w) bind(c, name='XMapWindow')
             use, intrinsic :: iso_c_binding
