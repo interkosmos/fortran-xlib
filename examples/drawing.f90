@@ -46,20 +46,20 @@ program main
     white = x_white_pixel(display, screen)
 
     ! See https://en.wikipedia.org/wiki/X11_color_names for more colours.
-    rc = x_alloc_named_color(display, colormap, 'gold' // c_null_char, gold, gold)
+    rc = x_alloc_named_color(display, colormap, 'Gold' // c_null_char, gold, gold)
 
     if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocated "gold" colour.'
+        print *, 'XAllocNamedColor failed to allocate "Gold" colour.'
 
-    rc = x_alloc_named_color(display, colormap, 'orchid' // c_null_char, orchid, orchid)
-
-    if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocated "orchid" colour.'
-
-    rc = x_alloc_named_color(display, colormap, 'turquoise' // c_null_char, turquoise, turquoise)
+    rc = x_alloc_named_color(display, colormap, 'Orchid' // c_null_char, orchid, orchid)
 
     if (rc == 0) &
-       print *, 'XAllocNamedColor failed to allocated "turquoise" colour.'
+        print *, 'XAllocNamedColor failed to allocate "Orchid" colour.'
+
+    rc = x_alloc_named_color(display, colormap, 'Turquoise' // c_null_char, turquoise, turquoise)
+
+    if (rc == 0) &
+       print *, 'XAllocNamedColor failed to allocate "Turquoise" colour.'
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, 400, 300, 5, black, white)

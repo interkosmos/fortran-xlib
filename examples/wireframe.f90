@@ -232,10 +232,10 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'teal' // c_null_char, color, color)
+    rc = x_alloc_named_color(display, colormap, 'SteelBlue' // c_null_char, color, color)
 
     if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocate "teal" colour.'
+        print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, width, height, 5, white, black)
@@ -259,12 +259,12 @@ program main
     call x_set_background(display, gc, black)
     call x_set_foreground(display, gc, white)
 
+    ! Create double buffer.
+    double_buffer = x_create_pixmap(display, window, width, height, 24)
+
     ! Show window.
     call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
     call x_map_window(display, window)
-
-    ! Create double buffer.
-    double_buffer = x_create_pixmap(display, window, width, height, 24)
 
     do
         rc = x_pending(display)
@@ -295,6 +295,7 @@ program main
     end do
 
     ! Clean up and close window.
+    call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
