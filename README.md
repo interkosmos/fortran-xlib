@@ -1,4 +1,4 @@
-# f03xlib
+# f03xli2
 An `iso_c_binding` interface to Xlib for Fortran 2003/2008. Currently, only a
 subset of Xlib is implemented.
 
@@ -23,6 +23,7 @@ Example programmes utilising the interface can be found in the directory `exampl
 * **starfield** flys through a starfield.
 * **wireframe** renders a wire-frame model of a Tie Fighter.
 * **mandelbrot** draws a Mandelbrot set.
+* **text** outputs coloured text.
 
 Build them with BSD make:
 ```
@@ -32,6 +33,7 @@ $ make drawing
 $ make starfield
 $ make wireframe
 $ make mandelbrot
+$ make text
 ```
 
 Without BSD make, compile the examples manually, for instance:
