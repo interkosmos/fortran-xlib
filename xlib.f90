@@ -628,6 +628,36 @@ module xlib_types
         integer(kind=c_short) :: x
         integer(kind=c_short) :: y
     end type x_point
+
+    ! XCharStruct
+    type, bind(c) :: x_char_struct
+        integer(kind=c_short) :: lbearing
+        integer(kind=c_short) :: rbearing
+        integer(kind=c_short) :: width
+        integer(kind=c_short) :: ascent
+        integer(kind=c_short) :: descent
+        integer(kind=c_short) :: attributes
+    end type x_char_struct
+
+    ! XFontStruct
+    type, bind(c) :: x_font_struct
+        type(c_ptr)          :: ext_data
+        integer(kind=c_long) :: fid
+        integer(kind=c_int)  :: direction
+        integer(kind=c_int)  :: min_char_or_byte2
+        integer(kind=c_int)  :: max_char_or_byte2
+        integer(kind=c_int)  :: min_byte1
+        integer(kind=c_int)  :: max_byte1
+        logical(kind=c_bool) :: all_chars_exist
+        integer(kind=c_int)  :: default_char
+        integer(kind=c_int)  :: n_properties
+        type(c_ptr)          :: properties
+        type(x_char_struct)  :: min_bounds
+        type(x_char_struct)  :: max_bounds
+        type(c_ptr)          :: per_char
+        integer(kind=c_int)  :: ascent
+        integer(kind=c_int)  :: descent
+    end type x_font_struct
 end module xlib_types
 
 module xlib
@@ -747,12 +777,21 @@ module xlib
             integer(kind=c_long)                      :: x_intern_atom
         end function x_intern_atom
 
+        ! XFontStruct *XLoadQueryFont(Display *display, char *name)
+        function x_load_query_font_(display, name) bind(c, name='XLoadQueryFont')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),            intent(in), value :: display
+            character(kind=c_char), intent(in)        :: name
+            type(c_ptr)                               :: x_load_query_font_
+        end function x_load_query_font_
+
         ! Display *XOpenDisplay (char *display_name)
         function x_open_display(display_name) bind(c, name='XOpenDisplay')
             use, intrinsic :: iso_c_binding
             implicit none
-            character(kind=c_char, len=1), intent(in) :: display_name
-            type(c_ptr)                               :: x_open_display
+            character(kind=c_char), intent(in) :: display_name
+            type(c_ptr)                        :: x_open_display
         end function x_open_display
 
         ! int XPending(Display *display)
@@ -874,6 +913,19 @@ module xlib
             integer(kind=c_int),  intent(in), value :: height
         end subroutine x_draw_rectangle
 
+        ! XDrawString(Display *display, Drawable d, GC gc, int x, int y, char *string, int length)
+        subroutine x_draw_string(display, d, gc, x, y, string, length) bind(c, name='XDrawString')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),            intent(in), value :: display
+            integer(kind=c_long),   intent(in), value :: d
+            type(c_ptr),            intent(in), value :: gc
+            integer(kind=c_int),    intent(in), value :: x
+            integer(kind=c_int),    intent(in), value :: y
+            character(kind=c_char), intent(in)        :: string
+            integer(kind=c_int),    intent(in), value :: length
+        end subroutine x_draw_string
+
         ! XFillArc(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height, int angle1, int angle2)
         subroutine x_fill_arc(display, d, gc, x, y, width, height, angle1, angle2) bind(c, name='XFillArc')
             use, intrinsic :: iso_c_binding
@@ -941,6 +993,15 @@ module xlib
             integer(kind=c_long),               intent(in), value :: planes
         end subroutine x_free_colors
 
+        ! XFreeFont(Display *display, XFontStruct font_struct)
+        subroutine x_free_font(display, font_struct) bind(c, name='XFreeFont')
+            use, intrinsic :: iso_c_binding
+            use :: xlib_types
+            implicit none
+            type(c_ptr),         intent(in), value :: display
+            type(x_font_struct), intent(in)        :: font_struct
+        end subroutine x_free_font
+
         ! XFreeGC(Display *display, GC gc)
         subroutine x_free_gc(display, gc) bind(c, name='XFreeGC')
             use, intrinsic :: iso_c_binding
@@ -1001,6 +1062,15 @@ module xlib
             integer(kind=c_int), intent(in), value :: fill_style
         end subroutine x_set_fill_style
 
+        ! XSetFont(Display *display, GC gc, Font font)
+        subroutine x_set_font(display, gc, font) bind(c, name='XSetFont')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            type(c_ptr),          intent(in), value :: gc
+            integer(kind=c_long), intent(in), value :: font
+        end subroutine x_set_font
+
         ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style, int cap_style, int join_style)
         subroutine x_set_line_attributes(display, gc, line_width, line_style, cap_style, join_style) &
                 bind(c, name='XSetLineAttributes')
@@ -1049,9 +1119,45 @@ module xlib
             type(c_ptr),          intent(in), value :: display
             logical(kind=c_bool), intent(in), value :: discard
         end subroutine
+
+        ! XTextExtents(XFontStruct *font_struct, char *string, int nchars, int *direction_return, int *font_ascent_return, int *font_descrent_return, XCharStruct *overall_return)
+        subroutine x_text_extents(font_struct, string, nchars, direction_return, font_ascent_return, &
+                font_descent_return, overall_return) bind(c, name='XTextExtents')
+            use, intrinsic :: iso_c_binding
+            use :: xlib_types
+            implicit none
+            type(x_font_struct)           :: font_struct
+            character(kind=c_char)        :: string
+            integer(kind=c_int),    value :: nchars
+            integer(kind=c_int)           :: direction_return
+            integer(kind=c_int)           :: font_ascent_return
+            integer(kind=c_int)           :: font_descent_return
+            type(x_char_struct)           :: overall_return
+        end subroutine x_text_extents
+
+        ! XUnloadFont(Display *display, Font font)
+        subroutine x_unload_font(display, font) bind(c, name='XUnloadFont')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long)                    :: font
+        end subroutine x_unload_font
     end interface
 
     contains
+        function x_load_query_font(display, name)
+            !! Returns XFontStruct from C pointer.
+            use :: xlib_types
+            implicit none
+            type(c_ptr),            intent(in), value :: display
+            character(kind=c_char), intent(in)        :: name
+            type(c_ptr)                               :: ptr
+            type(x_font_struct),    pointer           :: x_load_query_font
+
+            ptr = x_load_query_font_(display, name)
+            call c_f_pointer(ptr, x_load_query_font)
+        end function x_load_query_font
+
         subroutine x_next_event(display, event_return)
             use :: xlib_consts
             use :: xlib_types
