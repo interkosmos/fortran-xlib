@@ -1,15 +1,21 @@
 # f03xlib
 An `iso_c_binding` interface to Xlib for Fortran 2003/2008. Currently, only a
-subset of Xlib is implemented.
+subset of Xlib is implemented. In order to work with XPM files, an interface to
+`libxpm` is provided by `xpm.f90`.
 
 ## Build
-You can use the provided Makefile to compile everything. Build the interface with:
+You can use the Makefile to compile everything. Build the Xlib interface with:
 ```
 $ make xlib
 ```
 Or run your favourite Fortran compiler directly:
 ```
 $ gfortran8 -c xlib.f90
+```
+
+Build the XPM interface with:
+```
+$ make xpm
 ```
 
 ## Examples
@@ -24,19 +30,11 @@ Example programmes utilising the interface can be found in the directory `exampl
 * **wireframe** renders a wire-frame model of a Tie Fighter.
 * **mandelbrot** draws a Mandelbrot set.
 * **text** outputs coloured text.
+* **raycaster** projects a 2-D map into 3-D.
+* **image** loads and displays an XPM image with transparency.
 
-Build them with BSD make:
-```
-$ make window
-$ make events
-$ make drawing
-$ make starfield
-$ make wireframe
-$ make mandelbrot
-$ make text
-```
-
-Without BSD make, compile the examples manually, for instance:
+Build them with `make <name>`. Without BSD make, compile the examples manually,
+for instance:
 ```
 $ gfortran8 -o window -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ examples/window.f90 xlib.o -lX11
 ```
