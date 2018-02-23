@@ -14,6 +14,7 @@ program main
     type(c_ptr)                   :: gc
     type(x_color),   dimension(5) :: colors
     type(x_event)                 :: event
+    type(x_font_struct)           :: font
     type(x_gc_values)             :: values
     type(x_size_hints)            :: size_hints
     integer                       :: screen
@@ -27,7 +28,6 @@ program main
     integer(kind=8)               :: white
     integer(kind=8)               :: window
     integer(kind=8)               :: wm_delete_window
-    type(x_font_struct)           :: font
     integer(kind=8), dimension(5) :: long
     integer(kind=8), dimension(5) :: pixels
 

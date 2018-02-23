@@ -177,7 +177,7 @@ module obj
 end module obj
 
 program main
-    use, intrinsic :: iso_c_binding
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char
     use :: xlib
     use :: xlib_consts
     use :: xlib_types
@@ -211,7 +211,7 @@ program main
     interface
         subroutine usleep(useconds) bind(c)
             !! Interface to usleep in libc.
-            use iso_c_binding
+            use, intrinsic :: iso_c_binding, only: c_int_32_t
             implicit none
             integer(c_int32_t), value :: useconds
         end subroutine
@@ -271,7 +271,7 @@ program main
 
         if (rc > 0) then
             call x_next_event(display, event)
-        else
+
             select case (event%type)
                 case (expose)
                     ! call draw()
@@ -281,7 +281,7 @@ program main
                     if (long(1) == wm_delete_window) &
                         exit
             end select
-
+        else
             call update(angle_x, angle_y, angle_z)
             call render()
 
