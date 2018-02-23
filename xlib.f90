@@ -1053,6 +1053,25 @@ module xlib
             integer(kind=c_long), intent(in), value :: background
         end subroutine x_set_background
 
+        ! XSetClipMask(Display *display, GC gc, Pixmap pixmap)
+        subroutine x_set_clip_mask(display, gc, pixmap) bind(c, name='XSetClipMask')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            type(c_ptr),          intent(in), value :: gc
+            integer(kind=c_long), intent(in), value :: pixmap
+        end subroutine x_set_clip_mask
+
+        ! XSetClipOrigin(Display *display, GC gc, int clip_x_origin, int clip_y_origin)
+        subroutine x_set_clip_origin(display, gc, clip_x_origin, clip_y_origin) bind(c, name='XSetClipOrigin')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),         intent(in), value :: display
+            type(c_ptr),         intent(in), value :: gc
+            integer(kind=c_int), intent(in), value :: clip_x_origin
+            integer(kind=c_int), intent(in), value :: clip_y_origin
+        end subroutine x_set_clip_origin
+
         ! XSetFillStyle(Display *display, GC gc, int fill_style)
         subroutine x_set_fill_style(display, gc, fill_style) bind(c, name='XSetFillStyle')
             use, intrinsic :: iso_c_binding
@@ -1071,6 +1090,15 @@ module xlib
             integer(kind=c_long), intent(in), value :: font
         end subroutine x_set_font
 
+        ! XSetForeground(Display *display, GC gc, unsigned long foreground)
+        subroutine x_set_foreground(display, gc, foreground) bind(c, name='XSetForeground')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),          intent(in), value :: display
+            type(c_ptr),          intent(in), value :: gc
+            integer(kind=c_long), intent(in), value :: foreground
+        end subroutine x_set_foreground
+
         ! XSetLineAttributes(Display *display, GC gc, unsigned int line_width, int line_style, int cap_style, int join_style)
         subroutine x_set_line_attributes(display, gc, line_width, line_style, cap_style, join_style) &
                 bind(c, name='XSetLineAttributes')
@@ -1084,14 +1112,24 @@ module xlib
             integer(kind=c_int), intent(in), value :: join_style
         end subroutine x_set_line_attributes
 
-        ! XSetForeground(Display *display, GC gc, unsigned long foreground)
-        subroutine x_set_foreground(display, gc, foreground) bind(c, name='XSetForeground')
+        ! XSetStipple(Display *display, GC gc, Pixmap stipple)
+        subroutine x_set_stipple(display, gc, stipple) bind(c, name='XSetStipple')
             use, intrinsic :: iso_c_binding
             implicit none
             type(c_ptr),          intent(in), value :: display
             type(c_ptr),          intent(in), value :: gc
-            integer(kind=c_long), intent(in), value :: foreground
-        end subroutine x_set_foreground
+            integer(kind=c_long), intent(in), value :: stipple
+        end subroutine x_set_stipple
+
+        ! XSetTSOrigin(Display *display, GC gc, int ts_x_origin, int ts_y_origin)
+        subroutine x_set_ts_origin(display, gc, ts_x_origin, ts_y_origin) bind(c, name='XSetTSOrigin')
+            use, intrinsic :: iso_c_binding
+            implicit none
+            type(c_ptr),         intent(in), value :: display
+            type(c_ptr),         intent(in), value :: gc
+            integer(kind=c_int), intent(in), value :: ts_x_origin
+            integer(kind=c_int), intent(in), value :: ts_y_origin
+        end subroutine x_set_ts_origin
 
         ! XSetWMNormalHints(Display *display, Window w, XSizeHints *hints)
         subroutine x_set_wm_normal_hints(display, w, hints) bind(c, name='XSetWMNormalHints')
