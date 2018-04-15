@@ -4,7 +4,7 @@ subset of Xlib is implemented. In order to work with XPM files, an interface to
 `libxpm` is provided by `xpm.f90`.
 
 ## Build
-You can use the Makefile to compile everything. Build the Xlib interface with:
+You can use BSD make to compile everything. Build the Xlib interface with:
 ```
 $ make xlib
 ```
