@@ -5,18 +5,19 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding
+    use, intrinsic :: iso_c_binding, only: c_null_char
     use :: xlib
     use :: xlib_consts
     use :: xlib_types
     implicit none
+    integer, parameter :: WIDTH  = 640
+    integer, parameter :: HEIGHT = 480
+
     type(c_ptr)        :: display
     type(c_ptr)        :: gc
     type(x_gc_values)  :: values
     type(x_size_hints) :: size_hints
     integer            :: screen
-    integer            :: width  = 640
-    integer            :: height = 480
     integer(kind=8)    :: root
     integer(kind=8)    :: window
     integer(kind=8)    :: black
@@ -30,14 +31,14 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    window = x_create_simple_window(display, root, 0, 0, width, height, 0, black, white)
+    window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, black, white)
 
     ! Prevent resizing.
-    size_hints%flags      = ior(p_min_size, p_max_size)
-    size_hints%min_width  = width
-    size_hints%min_height = height
-    size_hints%max_width  = width
-    size_hints%max_height = height
+    size_hints%flags      = ior(P_MIN_SIZE, P_MAX_SIZE)
+    size_hints%min_width  = WIDTH
+    size_hints%min_height = HEIGHT
+    size_hints%max_width  = WIDTH
+    size_hints%max_height = HEIGHT
 
     call x_set_wm_normal_hints(display, window, size_hints)
 

@@ -17,19 +17,19 @@ module raycasting
     integer, parameter :: map_height = 12
 
     integer, dimension(map_width, map_height) :: map = reshape( &
-        (/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, &
-           1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, &
-           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
-           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, &
-           1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
-           1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
-           1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
-           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, &
-           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
-           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
-           1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, &
-           1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 /), &
-        (/ map_height, map_width /) )
+        [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, &
+          1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, &
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, &
+          1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
+          1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
+          1, 3, 3, 0, 0, 0, 0, 2, 0, 0, 3, 1, &
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 1, &
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
+          1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
+          1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, &
+          1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 ], &
+        [ map_height, map_width ] )
 
     type(point2d) :: pos
     type(point2d) :: dir
@@ -136,29 +136,30 @@ program main
     use :: xpm
     use :: raycasting
     implicit none
-    logical                       :: done             = .false.
-    integer                       :: width            = 640
-    integer                       :: height           = 450
-    integer                       :: rc
-    integer                       :: screen
-    integer(kind=8)               :: root
-    integer(kind=8)               :: window
-    integer(kind=8)               :: double_buffer
-    integer(kind=8)               :: wm_delete_window
-    integer(kind=8)               :: colormap
-    integer(kind=8)               :: black
-    integer(kind=8)               :: white
-    integer(kind=8), dimension(5) :: long
-    integer(kind=8), dimension(7) :: pixels
-    type(x_color),   dimension(7) :: palette
-    type(x_event)                 :: event
-    type(x_gc_values)             :: values
-    type(x_size_hints)            :: size_hints
-    type(c_ptr)                   :: display
-    type(c_ptr)                   :: gc
-    real                          :: time
-    real                          :: old_time
-    real                          :: min_time         = 0.05
+    integer, parameter :: WIDTH  = 640
+    integer, parameter :: HEIGHT = 450
+
+    logical            :: done = .false.
+    integer            :: rc
+    integer            :: screen
+    integer(kind=8)    :: root
+    integer(kind=8)    :: window
+    integer(kind=8)    :: double_buffer
+    integer(kind=8)    :: wm_delete_window
+    integer(kind=8)    :: colormap
+    integer(kind=8)    :: black
+    integer(kind=8)    :: white
+    integer(kind=8)    :: long(5)
+    integer(kind=8)    :: pixels(7)
+    type(x_color)      :: palette(7)
+    type(x_event)      :: event
+    type(x_gc_values)  :: values
+    type(x_size_hints) :: size_hints
+    type(c_ptr)        :: display
+    type(c_ptr)        :: gc
+    real               :: time
+    real               :: old_time
+    real               :: min_time         = 0.05
 
     interface
         subroutine usleep(useconds) bind(c)
@@ -182,18 +183,18 @@ program main
     call alloc_colors()
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
+    window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
     call x_store_name(display, window, 'Fortran 3D' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
-    size_hints%flags      = ior(p_min_size, p_max_size)
-    size_hints%min_width  = width
-    size_hints%min_height = height
-    size_hints%max_width  = width
-    size_hints%max_height = height
+    size_hints%flags      = ior(P_MIN_SIZE, P_MAX_SIZE)
+    size_hints%min_width  = WIDTH
+    size_hints%min_height = HEIGHT
+    size_hints%max_width  = WIDTH
+    size_hints%max_height = HEIGHT
 
     call x_set_wm_normal_hints(display, window, size_hints)
 
@@ -201,13 +202,13 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Create double buffer.
-    double_buffer = x_create_pixmap(display, window, width, height, 24)
+    double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
 
     call x_set_foreground(display, gc, black)
-    call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height)
+    call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, key_press_mask));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, KEY_PRESS_MASK));
     call x_map_window(display, window)
 
     call init()
@@ -381,13 +382,13 @@ program main
             integer :: line_length
 
             call x_set_foreground(display, gc, black)
-            call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height / 2)
+            call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT / 2)
 
             call x_set_foreground(display, gc, pixels(1))
-            call x_fill_rectangle(display, double_buffer, gc, 0, height / 2, width, height)
+            call x_fill_rectangle(display, double_buffer, gc, 0, HEIGHT / 2, WIDTH, HEIGHT)
 
-            do x = 1, width
-                call cast_ray(width, height, x - 1, y1, y2, wall, side)
+            do x = 1, WIDTH
+                call cast_ray(WIDTH, HEIGHT, x - 1, y1, y2, wall, side)
 
                 if (wall == 0) &
                     continue
@@ -400,6 +401,6 @@ program main
 
         subroutine draw()
             !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
+            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
         end subroutine draw
 end program main

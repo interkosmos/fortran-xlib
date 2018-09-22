@@ -10,20 +10,20 @@ program main
     use :: xlib_consts
     use :: xlib_types
     implicit none
-    type(c_ptr)                   :: display
-    type(c_ptr)                   :: gc
-    type(x_event)                 :: event
-    type(x_configure_event)       :: x_configure
-    type(x_client_message_event)  :: x_client_message
-    type(x_gc_values)             :: values
-    integer                       :: rc
-    integer                       :: screen
-    integer(kind=8)               :: root
-    integer(kind=8)               :: window
-    integer(kind=8)               :: black
-    integer(kind=8)               :: white
-    integer(kind=8)               :: wm_delete_window
-    integer(kind=8), dimension(5) :: l
+    type(c_ptr)                  :: display
+    type(c_ptr)                  :: gc
+    type(x_event)                :: event
+    type(x_configure_event)      :: x_configure
+    type(x_client_message_event) :: x_client_message
+    type(x_gc_values)            :: values
+    integer                      :: rc
+    integer                      :: screen
+    integer(kind=8)              :: root
+    integer(kind=8)              :: window
+    integer(kind=8)              :: black
+    integer(kind=8)              :: white
+    integer(kind=8)              :: wm_delete_window
+    integer(kind=8)              :: l(5)
 
     ! Create window.
     display = x_open_display(c_null_char)
@@ -45,7 +45,7 @@ program main
     call x_set_foreground(display, gc, black)
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, ior(structure_notify_mask, key_press_mask)));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, ior(STRUCTURE_NOTIFY_MASK, KEY_PRESS_MASK)));
     call x_map_window(display, window)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)

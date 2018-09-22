@@ -10,26 +10,27 @@ program main
     use :: xlib_consts
     use :: xlib_types
     implicit none
-    type(c_ptr)                   :: display
-    type(c_ptr)                   :: gc
-    type(x_event)                 :: event
-    type(x_gc_values)             :: values
-    type(x_size_hints)            :: size_hints
-    type(x_color)                 :: midnight_blue
-    type(x_color)                 :: indigo
-    type(x_color)                 :: purple
-    integer                       :: screen
-    integer                       :: rc
-    integer                       :: width             = 800
-    integer                       :: height            = 600
-    integer(kind=8)               :: root
-    integer(kind=8)               :: colormap
-    integer(kind=8)               :: black
-    integer(kind=8)               :: white
-    integer(kind=8)               :: window
-    integer(kind=8)               :: double_buffer
-    integer(kind=8)               :: wm_delete_window
-    integer(kind=8), dimension(5) :: long
+    integer, parameter :: WIDTH  = 800
+    integer, parameter :: HEIGHT = 600
+
+    type(c_ptr)        :: display
+    type(c_ptr)        :: gc
+    type(x_event)      :: event
+    type(x_gc_values)  :: values
+    type(x_size_hints) :: size_hints
+    type(x_color)      :: midnight_blue
+    type(x_color)      :: indigo
+    type(x_color)      :: purple
+    integer            :: screen
+    integer            :: rc
+    integer(kind=8)    :: root
+    integer(kind=8)    :: colormap
+    integer(kind=8)    :: black
+    integer(kind=8)    :: white
+    integer(kind=8)    :: window
+    integer(kind=8)    :: double_buffer
+    integer(kind=8)    :: wm_delete_window
+    integer(kind=8)    :: long(5)
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -46,18 +47,18 @@ program main
     rc = x_alloc_named_color(display, colormap, 'Purple' // c_null_char, purple, purple)
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
+    window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
-    size_hints%flags      = ior(p_min_size, p_max_size)
-    size_hints%min_width  = width
-    size_hints%min_height = height
-    size_hints%max_width  = width
-    size_hints%max_height = height
+    size_hints%flags      = ior(P_MIN_SIZE, P_MAX_SIZE)
+    size_hints%min_width  = WIDTH
+    size_hints%min_height = HEIGHT
+    size_hints%max_width  = WIDTH
+    size_hints%max_height = HEIGHT
 
     call x_set_wm_normal_hints(display, window, size_hints)
 
@@ -65,16 +66,16 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Create double buffer.
-    double_buffer = x_create_pixmap(display, window, width, height, 24)
+    double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
 
     call x_set_foreground(display, gc, black)
-    call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height)
+    call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
 
     ! Render Mandelbrot set.
     call render()
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
     call x_map_window(display, window)
 
     ! Event loop.
@@ -93,7 +94,7 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, (/ midnight_blue%pixel, indigo%pixel, purple%pixel /), 3, int8(0))
+    call x_free_colors(display, colormap, [ midnight_blue%pixel, indigo%pixel, purple%pixel ], 3, int8(0))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
@@ -128,11 +129,11 @@ program main
 
             call cpu_time(t1)
 
-            do y = 0, height
-                im = -1.5 + real(y) * 3.0 / real(height)
+            do y = 0, HEIGHT
+                im = -1.5 + real(y) * 3.0 / real(HEIGHT)
 
-                do x = 0, width
-                    re = -2.0 + real(x) * 3.0 / real(width)
+                do x = 0, WIDTH
+                    re = -2.0 + real(x) * 3.0 / real(WIDTH)
                     n = mandelbrot(cmplx(re, im), max_iter, threshold)
 
                     if (n >= 15) then
@@ -160,6 +161,6 @@ program main
 
         subroutine draw()
             !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
+            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
         end subroutine draw
 end program main

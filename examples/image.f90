@@ -12,23 +12,24 @@ program main
     use :: xlib_types
     use :: xpm
     implicit none
-    character(len=*), parameter :: file_name        = 'examples/bsd_daemon.xpm'
-    type(c_ptr)                 :: display
-    type(c_ptr)                 :: gc
-    type(x_event)               :: event
-    type(x_gc_values)           :: values
-    integer                     :: width            = 320
-    integer                     :: height           = 240
-    integer                     :: screen
-    integer                     :: rc
-    integer(kind=8)             :: root
-    integer(kind=8)             :: colormap
-    integer(kind=8)             :: black
-    integer(kind=8)             :: white
-    integer(kind=8)             :: window
-    integer(kind=8)             :: pixmap           = 0
-    integer(kind=8)             :: shape_mask       = 0
-    integer(kind=8)             :: wm_delete_window
+    integer,          parameter :: WIDTH     = 320
+    integer,          parameter :: HEIGHT    = 240
+    character(len=*), parameter :: FILE_NAME = 'examples/bsd_daemon.xpm'
+
+    type(c_ptr)       :: display
+    type(c_ptr)       :: gc
+    type(x_event)     :: event
+    type(x_gc_values) :: values
+    integer           :: screen
+    integer           :: rc
+    integer(kind=8)   :: root
+    integer(kind=8)   :: colormap
+    integer(kind=8)   :: black
+    integer(kind=8)   :: white
+    integer(kind=8)   :: window
+    integer(kind=8)   :: pixmap           = 0
+    integer(kind=8)   :: shape_mask       = 0
+    integer(kind=8)   :: wm_delete_window
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -41,7 +42,7 @@ program main
     white = x_white_pixel(display, screen)
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 0, black, white)
+    window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, black, white)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
@@ -51,13 +52,13 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Read XPM image from file.
-    rc = xpm_read_file_to_pixmap(display, window, file_name, pixmap, shape_mask, c_null_ptr)
+    rc = xpm_read_file_to_pixmap(display, window, FILE_NAME, pixmap, shape_mask, c_null_ptr)
 
     if (rc < 0) &
         call quit() ! Fatal error.
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
 
     ! Event loop.
@@ -87,21 +88,19 @@ program main
             call x_free_gc(display, gc)
             call x_destroy_window(display, window)
             call x_close_display(display)
-
-            call exit(0)
         end subroutine quit
 
         subroutine draw()
             !! Draws pixmap on the window.
             implicit none
-            integer :: x = 50
-            integer :: y = 50
+            integer, parameter :: x = 50
+            integer, parameter :: y = 50
 
             call x_clear_window(display, window)
 
             ! Set clipping mask for transparent pixels.
-            call x_set_clip_origin(display, gc, x, y);
-            call x_set_clip_mask(display, gc, shape_mask);
+            call x_set_clip_origin(display, gc, x, y)
+            call x_set_clip_mask(display, gc, shape_mask)
 
             ! Copy pixmap to window.
             call x_copy_area(display, pixmap, window, gc, 0, 0, 64, 64, x, y)

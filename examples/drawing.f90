@@ -10,22 +10,22 @@ program main
     use :: xlib_consts
     use :: xlib_types
     implicit none
-    type(c_ptr)                 :: display
-    type(c_ptr)                 :: gc
-    type(x_color)               :: gold
-    type(x_color)               :: orchid
-    type(x_color)               :: turquoise
-    type(x_event)               :: event
-    type(x_gc_values)           :: values
-    type(x_point), dimension(3) :: points
-    integer                     :: screen
-    integer                     :: rc
-    integer(kind=8)             :: root
-    integer(kind=8)             :: colormap
-    integer(kind=8)             :: black
-    integer(kind=8)             :: white
-    integer(kind=8)             :: window
-    integer(kind=8)             :: wm_delete_window
+    type(c_ptr)       :: display
+    type(c_ptr)       :: gc
+    type(x_color)     :: gold
+    type(x_color)     :: orchid
+    type(x_color)     :: turquoise
+    type(x_event)     :: event
+    type(x_gc_values) :: values
+    type(x_point)     :: points(3)
+    integer           :: screen
+    integer           :: rc
+    integer(kind=8)   :: root
+    integer(kind=8)   :: colormap
+    integer(kind=8)   :: black
+    integer(kind=8)   :: white
+    integer(kind=8)   :: window
+    integer(kind=8)   :: wm_delete_window
 
     ! The coordinates of the polygon.
     points(1)%x = 200
@@ -72,7 +72,7 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
     call x_map_window(display, window)
 
     ! Event loop.
@@ -88,7 +88,7 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, (/ gold%pixel, orchid%pixel, turquoise%pixel /), 3, int8(0))
+    call x_free_colors(display, colormap, [ gold%pixel, orchid%pixel, turquoise%pixel ], 3, int8(0))
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
@@ -100,8 +100,8 @@ program main
             call x_set_foreground(display, gc, black)
 
             ! Set (optional) drawing styles.
-            call x_set_line_attributes(display, gc, 2, line_solid, cap_butt, join_bevel);
-            call x_set_fill_style(display, gc, fill_solid)
+            call x_set_line_attributes(display, gc, 2, LINE_SOLID, CAP_BUTT, JOIN_BEVEL);
+            call x_set_fill_style(display, gc, FILL_SOLID)
 
             ! Draw lines.
             call x_draw_line(display, window, gc, 10, 10, 200, 30)
@@ -120,6 +120,6 @@ program main
 
             ! Draw polygons.
             call x_set_foreground(display, gc, orchid%pixel)
-            call x_fill_polygon(display, window, gc, points, 3, complex, coord_mode_origin)
+            call x_fill_polygon(display, window, gc, points, 3, COMPLEX, COORD_MODE_ORIGIN)
         end subroutine draw
 end program main

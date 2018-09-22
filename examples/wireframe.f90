@@ -33,7 +33,7 @@ module vector
             real,          intent(in) :: distance
             real                      :: f
 
-            f = fov / (distance + v%z)
+            f   = fov / (distance + v%z)
             p%x = v%x * f + width / 2
             p%y = -1 * v%y * f + height / 2
         end function project
@@ -89,27 +89,27 @@ module obj
         integer :: v1, v2
     end type face
 
-    type(point3d), dimension(:), allocatable :: vertices
-    type(face),    dimension(:), allocatable :: faces
+    type(point3d), allocatable :: vertices(:)
+    type(face),    allocatable :: faces(:)
 
     public :: load_obj_file
 
     contains
         subroutine load_obj_file(file_name)
             !! Loads a Wavefront OBJ file.
-            character(len=*), intent(in)             :: file_name       ! File name.
-            character(len=100)                       :: buffer          ! Line buffer.
-            character(len=1)                         :: str             ! Temporary string.
-            integer                                  :: v_size, f_size  ! Array sizes.
-            integer                                  :: stat            ! I/O status.
-            integer, parameter                       :: fh = 10         ! File handle.
-            type(point3d), dimension(:), allocatable :: tmp_vertices    ! Temporary array for vertices.
-            type(face),    dimension(:), allocatable :: tmp_faces       ! Temporary array for faces.
+            character(len=*), intent(in) :: file_name       ! File name.
+            integer,          parameter  :: fh = 10         ! File handle.
+            character(len=100)           :: buffer          ! Line buffer.
+            character(len=1)             :: str             ! Temporary string.
+            integer                      :: v_size, f_size  ! Array sizes.
+            integer                      :: stat            ! I/O status.
+            type(point3d), allocatable   :: tmp_vertices(:) ! Temporary array for vertices.
+            type(face),    allocatable   :: tmp_faces(:)    ! Temporary array for faces.
 
-            allocate(vertices(1))
-            allocate(faces(1))
+            allocate (vertices(1))
+            allocate (faces(1))
 
-            open(unit=fh, file=file_name, action='read', iostat=stat)
+            open (unit=fh, file=file_name, action='read', iostat=stat)
 
             if (stat == 0) then
                 do
@@ -122,7 +122,7 @@ module obj
                         case ('v')
                             ! Read vertice.
                             v_size = size(vertices)
-                            allocate(tmp_vertices(v_size + 1))
+                            allocate (tmp_vertices(v_size + 1))
                             tmp_vertices(1:v_size) = vertices
 
                             read(buffer, *) &
@@ -149,24 +149,24 @@ module obj
                     end select
                 end do
             else
-                write(*, *) 'Reading file "', file_name, '" failed: ', stat
+                print *, 'Reading file "', file_name, '" failed: ', stat
             end if
 
-            close(fh)
+            close (fh)
 
             ! Resize the arrays to their actual sizes (ugly, I know ...).
             if (allocated(tmp_vertices)) &
-                deallocate(tmp_vertices)
+                deallocate (tmp_vertices)
 
             if (allocated(tmp_faces)) &
-                deallocate(tmp_faces)
+                deallocate (tmp_faces)
 
             ! Actual array sizes.
             v_size = size(vertices) - 1
             f_size = size(faces) - 1
 
-            allocate(tmp_vertices(v_size))
-            allocate(tmp_faces(f_size))
+            allocate (tmp_vertices(v_size))
+            allocate (tmp_faces(f_size))
 
             tmp_vertices = vertices(1:v_size)
             tmp_faces    = faces(1:f_size)
@@ -184,40 +184,41 @@ program main
     use :: obj
     use :: vector
     implicit none
-    type(c_ptr)                              :: display
-    type(c_ptr)                              :: gc
-    type(x_color)                            :: color
-    type(x_event)                            :: event
-    type(x_gc_values)                        :: values
-    type(x_size_hints)                       :: size_hints
-    integer                                  :: screen
-    integer                                  :: rc
-    integer                                  :: width             = 640
-    integer                                  :: height            = 480
-    integer(kind=8)                          :: root
-    integer(kind=8)                          :: colormap
-    integer(kind=8)                          :: double_buffer
-    integer(kind=8)                          :: black
-    integer(kind=8)                          :: white
-    integer(kind=8)                          :: window
-    integer(kind=8)                          :: wm_delete_window
-    integer(kind=8), dimension(5)            :: long
-    type(point2d), dimension(:), allocatable :: transformed
-    real                                     :: angle_x           = 0.0
-    real                                     :: angle_y           = 0.0
-    real                                     :: angle_z           = 0.0
-    character(len=*), parameter              :: file_name         = 'examples/tie.obj'
+    integer,          parameter :: WIDTH     = 640
+    integer,          parameter :: HEIGHT    = 480
+    character(len=*), parameter :: FILE_NAME = 'examples/tie.obj'
+
+    type(c_ptr)                :: display
+    type(c_ptr)                :: gc
+    type(x_color)              :: color
+    type(x_event)              :: event
+    type(x_gc_values)          :: values
+    type(x_size_hints)         :: size_hints
+    integer                    :: screen
+    integer                    :: rc
+    integer(kind=8)            :: root
+    integer(kind=8)            :: colormap
+    integer(kind=8)            :: double_buffer
+    integer(kind=8)            :: black
+    integer(kind=8)            :: white
+    integer(kind=8)            :: window
+    integer(kind=8)            :: wm_delete_window
+    integer(kind=8)            :: long(5)
+    type(point2d), allocatable :: transformed(:)
+    real                       :: angle_x = 0.0
+    real                       :: angle_y = 0.0
+    real                       :: angle_z = 0.0
 
     interface
         subroutine usleep(useconds) bind(c)
             !! Interface to usleep in libc.
-            use, intrinsic :: iso_c_binding, only: c_int_32_t
+            use, intrinsic :: iso_c_binding, only: c_int32_t
             implicit none
             integer(c_int32_t), value :: useconds
         end subroutine
     end interface
 
-    call load_obj_file(file_name)
+    call load_obj_file(FILE_NAME)
 
     if (.not. allocated(vertices) .or. .not. allocated(faces)) &
         call exit(0)
@@ -238,18 +239,18 @@ program main
         print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
 
     ! Create window.
-    window = x_create_simple_window(display, root, 0, 0, width, height, 0, white, black)
+    window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
-    size_hints%flags      = ior(p_min_size, p_max_size)
-    size_hints%min_width  = width
-    size_hints%min_height = height
-    size_hints%max_width  = width
-    size_hints%max_height = height
+    size_hints%flags      = ior(P_MIN_SIZE, P_MAX_SIZE)
+    size_hints%min_width  = WIDTH
+    size_hints%min_height = HEIGHT
+    size_hints%max_width  = WIDTH
+    size_hints%max_height = HEIGHT
 
     call x_set_wm_normal_hints(display, window, size_hints)
 
@@ -260,10 +261,10 @@ program main
     call x_set_foreground(display, gc, white)
 
     ! Create double buffer.
-    double_buffer = x_create_pixmap(display, window, width, height, 24)
+    double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
 
     ! Show window.
-    call x_select_input(display, window, ior(exposure_mask, structure_notify_mask));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
     call x_map_window(display, window)
 
     do
@@ -295,7 +296,7 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, (/ color%pixel /), 1, int8(0))
+    call x_free_colors(display, colormap, [ color%pixel ], 1, int8(0))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
@@ -320,14 +321,14 @@ program main
             integer          :: i
 
             if (.not. allocated(transformed)) &
-                allocate(transformed(size(vertices)))
+                allocate (transformed(size(vertices)))
 
             do i = 1, size(vertices, 1)
                 v = vertices(i)
                 v = rotate_x(v, rad(angle_x))
                 v = rotate_y(v, rad(angle_y))
                 v = rotate_z(v, rad(angle_z))
-                transformed(i) = project(v, width, height, 256.0, 8.0)
+                transformed(i) = project(v, WIDTH, HEIGHT, 256.0, 8.0)
             end do
         end subroutine update
 
@@ -338,7 +339,7 @@ program main
             integer :: i
 
             call x_set_foreground(display, gc, black)
-            call x_fill_rectangle(display, double_buffer, gc, 0, 0, width, height)
+            call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
             call x_set_foreground(display, gc, color%pixel)
 
             do i = 1, size(faces, 1)
@@ -353,6 +354,6 @@ program main
 
         subroutine draw()
             !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, width, height, 0, 0)
+            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
         end subroutine draw
 end program main
