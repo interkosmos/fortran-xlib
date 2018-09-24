@@ -75,7 +75,7 @@ program main
     call render()
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
 
     ! Event loop.
@@ -156,7 +156,7 @@ program main
 
             call cpu_time(t2)
 
-            write(*, '(a f7.5 a)') 'rendering time: ', t2 - t1, ' s'
+            print '(a f7.5 a)', 'rendering time: ', t2 - t1, ' s'
         end subroutine render
 
         subroutine draw()

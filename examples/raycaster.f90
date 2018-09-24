@@ -208,7 +208,7 @@ program main
     call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, KEY_PRESS_MASK));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, KEY_PRESS_MASK))
     call x_map_window(display, window)
 
     call init()

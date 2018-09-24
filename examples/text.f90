@@ -76,7 +76,7 @@ program main
     call x_set_font(display, gc, font%fid)
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
 
     ! Event loop.

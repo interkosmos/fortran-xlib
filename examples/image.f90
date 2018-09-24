@@ -27,8 +27,8 @@ program main
     integer(kind=8)   :: black
     integer(kind=8)   :: white
     integer(kind=8)   :: window
-    integer(kind=8)   :: pixmap           = 0
-    integer(kind=8)   :: shape_mask       = 0
+    integer(kind=8)   :: pixmap = 0
+    integer(kind=8)   :: shape_mask = 0
     integer(kind=8)   :: wm_delete_window
 
     ! Open display.

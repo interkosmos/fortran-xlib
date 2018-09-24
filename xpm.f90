@@ -9,6 +9,20 @@ module xpm
     implicit none
 
     interface
+        ! int XpmReadFileToImage(Display *display, char *filename, XImage *image_return, XImage *shapeimage_return, XpmAttributes *attributes)
+        function xpm_read_file_to_image_(display, file_name, image_return, shape_image_return, attributes) &
+                bind(c, name='XpmReadFileToImage')
+            use, intrinsic :: iso_c_binding
+            use :: xlib_types
+            implicit none
+            type(c_ptr),            intent(in),  value :: display
+            character(kind=c_char), intent(in)         :: file_name
+            type(c_ptr),            intent(inout)      :: image_return
+            type(c_ptr),            intent(inout)      :: shape_image_return
+            type(c_ptr),            intent(in),  value :: attributes                 ! TODO
+            integer(kind=c_int)                        :: xpm_read_file_to_image_
+        end function xpm_read_file_to_image_
+
         ! int XpmReadFileToPixmap(Display *display, Drawable d, char *filename, Pixmap *pixmap_return, Pixmap *shapemask_return, XpmAttributes *attributes)
         function xpm_read_file_to_pixmap(display, d, file_name, pixmap_return, shapemask_return, attributes) &
                 bind(c, name='XpmReadFileToPixmap')
@@ -19,8 +33,26 @@ module xpm
             character(kind=c_char), intent(in)        :: file_name
             integer(kind=c_long),   intent(out)       :: pixmap_return
             integer(kind=c_long),   intent(out)       :: shapemask_return
-            type(c_ptr),            intent(in)        :: attributes                 ! TODO
+            type(c_ptr),            intent(in), value :: attributes                 ! TODO
             integer(kind=c_int)                       :: xpm_read_file_to_pixmap
         end function xpm_read_file_to_pixmap
     end interface
+
+    contains
+        function xpm_read_file_to_image(display, file_name, image_return, shape_image_return, attributes)
+            use :: xlib_types
+            implicit none
+            type(c_ptr),      intent(in),  value   :: display
+            character(len=*), intent(in)           :: file_name
+            type(x_image),                 pointer :: image_return
+            type(x_image),                 pointer :: shape_image_return
+            type(c_ptr),      intent(in)           :: attributes
+            type(c_ptr)                            :: ptr1, ptr2
+            integer                                :: xpm_read_file_to_image
+
+            xpm_read_file_to_image = xpm_read_file_to_image_(display, file_name, ptr1, ptr2, attributes)
+
+            call c_f_pointer(ptr1, image_return)
+            call c_f_pointer(ptr2, shape_image_return)
+        end function xpm_read_file_to_image
 end module xpm

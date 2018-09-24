@@ -45,7 +45,7 @@ program main
     call x_set_foreground(display, gc, black)
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, ior(STRUCTURE_NOTIFY_MASK, KEY_PRESS_MASK)));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, ior(STRUCTURE_NOTIFY_MASK, KEY_PRESS_MASK)))
     call x_map_window(display, window)
 
     wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
@@ -53,24 +53,24 @@ program main
 
     ! Event loop.
     do
-        write(*, '(a)') 'waiting for event ...'
+        print '(a)', 'waiting for event ...'
         call x_next_event(display, event)
 
         select case (event%type)
             case (expose)
-                write(*, *) 'Expose'
+                print *, 'Expose'
             case (configure_notify)
-                write(*, *) 'ConfigureNotify'
-                write(*, *) 'width:  ', event%x_configure%width
-                write(*, *) 'height: ', event%x_configure%height
+                print *, 'ConfigureNotify'
+                print *, 'width:  ', event%x_configure%width
+                print *, 'height: ', event%x_configure%height
             case (client_message)
-                write(*, *) 'ClientMessage'
+                print *, 'ClientMessage'
                 l = transfer(event%x_client_message%data, l)
 
                 if (l(1) == wm_delete_window) &
                     exit
             case (key_press)
-                write(*, *) 'KeyPress'
+                print *, 'KeyPress'
         end select
     end do
 

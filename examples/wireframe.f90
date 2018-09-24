@@ -264,7 +264,7 @@ program main
     double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
 
     do

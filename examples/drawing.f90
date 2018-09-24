@@ -72,7 +72,7 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Show window.
-    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK));
+    call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
 
     ! Event loop.
@@ -100,7 +100,7 @@ program main
             call x_set_foreground(display, gc, black)
 
             ! Set (optional) drawing styles.
-            call x_set_line_attributes(display, gc, 2, LINE_SOLID, CAP_BUTT, JOIN_BEVEL);
+            call x_set_line_attributes(display, gc, 2, LINE_SOLID, CAP_BUTT, JOIN_BEVEL)
             call x_set_fill_style(display, gc, FILL_SOLID)
 
             ! Draw lines.
