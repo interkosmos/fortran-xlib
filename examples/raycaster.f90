@@ -158,7 +158,7 @@ program main
     type(c_ptr)        :: gc
     real               :: time
     real               :: old_time
-    real               :: min_time         = 0.05
+    real               :: min_time = 0.05
 
     interface
         subroutine usleep(useconds) bind(c)

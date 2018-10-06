@@ -88,6 +88,8 @@ program main
             call x_free_gc(display, gc)
             call x_destroy_window(display, window)
             call x_close_display(display)
+
+            stop
         end subroutine quit
 
         subroutine draw()

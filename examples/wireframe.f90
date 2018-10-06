@@ -97,14 +97,14 @@ module obj
     contains
         subroutine load_obj_file(file_name)
             !! Loads a Wavefront OBJ file.
-            character(len=*), intent(in) :: file_name       ! File name.
-            integer,          parameter  :: fh = 10         ! File handle.
-            character(len=100)           :: buffer          ! Line buffer.
-            character(len=1)             :: str             ! Temporary string.
-            integer                      :: v_size, f_size  ! Array sizes.
-            integer                      :: stat            ! I/O status.
-            type(point3d), allocatable   :: tmp_vertices(:) ! Temporary array for vertices.
-            type(face),    allocatable   :: tmp_faces(:)    ! Temporary array for faces.
+            character(len=*), intent(in) :: file_name       !! File name.
+            integer,          parameter  :: fh = 10         !! File handle.
+            character(len=100)           :: buffer          !! Line buffer.
+            character(len=1)             :: str             !! Temporary string.
+            integer                      :: v_size, f_size  !! Array sizes.
+            integer                      :: stat            !! I/O status.
+            type(point3d), allocatable   :: tmp_vertices(:) !! Temporary array for vertices.
+            type(face),    allocatable   :: tmp_faces(:)    !! Temporary array for faces.
 
             allocate (vertices(1))
             allocate (faces(1))
@@ -221,7 +221,7 @@ program main
     call load_obj_file(FILE_NAME)
 
     if (.not. allocated(vertices) .or. .not. allocated(faces)) &
-        call exit(0)
+        stop
 
     ! Open display.
     display  = x_open_display(c_null_char)

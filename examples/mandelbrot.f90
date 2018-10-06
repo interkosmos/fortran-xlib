@@ -156,7 +156,7 @@ program main
 
             call cpu_time(t2)
 
-            print '(a f7.5 a)', 'rendering time: ', t2 - t1, ' s'
+            print '(a, f7.5, a)', 'rendering time: ', t2 - t1, ' s'
         end subroutine render
 
         subroutine draw()
