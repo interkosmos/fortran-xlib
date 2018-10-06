@@ -807,7 +807,7 @@ module xlib
             integer(kind=c_int)                     :: x_default_depth
         end function x_default_depth
 
-        ! Visual *XDefailtVisual(Display *display, int screen_number)
+        ! Visual *XDefaultVisual(Display *display, int screen_number)
         function x_default_visual(display, screen_number) bind(c, name='XDefaultVisual')
             use, intrinsic :: iso_c_binding
             implicit none

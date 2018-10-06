@@ -43,7 +43,7 @@ module vector
             implicit none
             real, intent(in) :: deg
 
-            rad = deg * pi / 100
+            rad = deg * pi / 180
         end function rad
 
         type(point3d) function rotate_x(v, angle) result(r)

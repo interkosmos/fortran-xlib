@@ -59,7 +59,6 @@ module raycasting
             integer              :: map_x, map_y
             integer              :: step_x, step_y
             real                 :: dist
-            real                 :: wall_x
             type(point2d)        :: camera
             type(point2d)        :: delta_dist
             type(point2d)        :: ray_dir
@@ -352,9 +351,8 @@ program main
         subroutine tick()
             !! Limits the number of frames per second.
             implicit none
-            character(len=30) :: fps_str
-            real              :: fps
-            real              :: frame_time
+            real :: fps
+            real :: frame_time
 
             old_time = time
             call cpu_time(time)
@@ -379,7 +377,6 @@ program main
             implicit none
             integer :: x, y1, y2
             integer :: wall, side, color
-            integer :: line_length
 
             call x_set_foreground(display, gc, black)
             call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT / 2)

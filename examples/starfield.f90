@@ -22,7 +22,6 @@ module starfield
         subroutine init()
             implicit none
             integer :: i
-            integer :: x, y, z
             real    :: r1, r2, r3
 
             do i = 1, size(stars)

@@ -10,20 +10,18 @@ program main
     use :: xlib_consts
     use :: xlib_types
     implicit none
-    type(c_ptr)                  :: display
-    type(c_ptr)                  :: gc
-    type(x_event)                :: event
-    type(x_configure_event)      :: x_configure
-    type(x_client_message_event) :: x_client_message
-    type(x_gc_values)            :: values
-    integer                      :: rc
-    integer                      :: screen
-    integer(kind=8)              :: root
-    integer(kind=8)              :: window
-    integer(kind=8)              :: black
-    integer(kind=8)              :: white
-    integer(kind=8)              :: wm_delete_window
-    integer(kind=8)              :: l(5)
+    type(c_ptr)       :: display
+    type(c_ptr)       :: gc
+    type(x_event)     :: event
+    type(x_gc_values) :: values
+    integer           :: rc
+    integer           :: screen
+    integer(kind=8)   :: root
+    integer(kind=8)   :: window
+    integer(kind=8)   :: black
+    integer(kind=8)   :: white
+    integer(kind=8)   :: wm_delete_window
+    integer(kind=8)   :: l(5)
 
     ! Create window.
     display = x_open_display(c_null_char)

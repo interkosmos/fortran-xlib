@@ -24,15 +24,15 @@ $ make xpm
 
 Example programmes utilising the interface can be found in the directory `examples`:
 
-* **window** displays a simple window.
-* **events** captures X11 events.
 * **drawing** draws some shapes on the window.
-* **starfield** flys through a starfield.
-* **wireframe** renders a wire-frame model of a Tie Fighter.
-* **mandelbrot** draws a Mandelbrot set.
-* **text** outputs coloured text.
-* **raycaster** projects a 2-D map into 3-D.
+* **events** captures X11 events.
 * **image** loads and displays an XPM image with transparency.
+* **mandelbrot** draws a Mandelbrot set.
+* **raycaster** projects a 2-D map into 3-D.
+* **starfield** flys through a starfield.
+* **text** outputs coloured text.
+* **window** displays a simple window.
+* **wireframe** renders a wire-frame model of a Tie Fighter.
 
 Build them with `make <name>`. Without BSD make, compile the examples manually,
 for instance:

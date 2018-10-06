@@ -13,24 +13,24 @@ program main
     integer, parameter :: WIDTH  = 320
     integer, parameter :: HEIGHT = 200
 
-    type(c_ptr)         :: display
-    type(c_ptr)         :: gc
-    type(x_color)       :: colors(5)
-    type(x_event)       :: event
-    type(x_font_struct) :: font
-    type(x_gc_values)   :: values
-    type(x_size_hints)  :: size_hints
-    integer             :: screen
-    integer             :: rc
-    integer             :: i
-    integer(kind=8)     :: root
-    integer(kind=8)     :: colormap
-    integer(kind=8)     :: black
-    integer(kind=8)     :: white
-    integer(kind=8)     :: window
-    integer(kind=8)     :: wm_delete_window
-    integer(kind=8)     :: long(5)
-    integer(kind=8)     :: pixels(5)
+    type(c_ptr)                  :: display
+    type(c_ptr)                  :: gc
+    type(x_color)                :: colors(5)
+    type(x_event)                :: event
+    type(x_font_struct), pointer :: font
+    type(x_gc_values)            :: values
+    type(x_size_hints)           :: size_hints
+    integer                      :: screen
+    integer                      :: rc
+    integer                      :: i
+    integer(kind=8)              :: root
+    integer(kind=8)              :: colormap
+    integer(kind=8)              :: black
+    integer(kind=8)              :: white
+    integer(kind=8)              :: window
+    integer(kind=8)              :: wm_delete_window
+    integer(kind=8)              :: long(5)
+    integer(kind=8)              :: pixels(5)
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -72,7 +72,7 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Load and set font.
-    font = x_load_query_font(display, 'fixed' // c_null_char)
+    font => x_load_query_font(display, 'fixed' // c_null_char)
     call x_set_font(display, gc, font%fid)
 
     ! Show window.
@@ -106,7 +106,6 @@ program main
             use :: xlib_types
             implicit none
             character(len=*), parameter :: text  = 'FORTRAN FOREVER!'
-            integer                     :: x, y
             integer                     :: direction
             integer                     :: ascent, descent
             integer                     :: i

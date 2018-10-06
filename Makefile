@@ -1,45 +1,66 @@
 FC         = gfortran8
-CFLAGS     = -fcheck=all -ffast-math -funroll-loops -Ofast -march=native -Wl,-rpath=/usr/local/lib/gcc8/
+CFLAGS     = -Wall -Wl,-rpath=/usr/local/lib/gcc8/
 LDFLAGS    = -I/usr/local/include/ -L/usr/local/lib/
 LIBS       = -lX11
-SOURCE     = xlib.f90
-OBJ        = xlib.o
+
+XLIB_SRC   = xlib.f90
+XLIB_OBJ   = xlib.o
+
+XPM_SRC    = xpm.f90
+XPM_OBJ    = xpm.o
 
 DIR        = examples
 
-WINDOW     = window
-EVENTS     = events
 DRAWING    = drawing
-STARFIELD  = starfield
-WIREFRAME  = wireframe
+EVENTS     = events
+IMAGE      = image
 MANDELBROT = mandelbrot
+RAYCASTER  = raycaster
+STARFIELD  = starfield
+TEXT       = text
+WINDOW     = window
+WIREFRAME  = wireframe
 
-all: $(OBJ)
+.PHONY: all clean
 
-xlib: $(OBJ)
+all: $(XLIB_OBJ) $(XPM_OBJ)
 
-$(OBJ):
-	$(FC) -c $(SOURCE)
+xlib: $(XLIB_OBJ)
 
-$(WINDOW): $(DIR)/$*.f90 $(OBJ)
+xpm: $(XPM_OBJ)
+
+$(XLIB_OBJ):
+	$(FC) -Wall -c $(XLIB_SRC)
+
+$(XPM_OBJ):
+	$(FC) -Wall -c $(XPM_SRC)
+
+$(WINDOW): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(EVENTS): $(DIR)/$*.f90 $(OBJ)
+$(EVENTS): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(DRAWING): $(DIR)/$*.f90 $(OBJ)
+$(DRAWING): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(STARFIELD): $(DIR)/$*.f90 $(OBJ)
+$(STARFIELD): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(WIREFRAME): $(DIR)/$*.f90 $(OBJ)
+$(WIREFRAME): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(MANDELBROT): $(DIR)/$*.f90 $(OBJ)
+$(MANDELBROT): $(DIR)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-.PHONY: clean
+$(TEXT): $(DIR)/$*.f90 $(XLIB_OBJ)
+	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
+
+$(RAYCASTER): $(DIR)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
+	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS) -lXpm
+
+$(IMAGE): $(DIR)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
+	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS) -lXpm
 
 clean:
-	rm *.mod $(OBJ) $(WINDOW) $(EVENTS) $(DRAWING) $(STARFIELD) $(WIREFRAME) $(MANDELBROT)
+	rm *.mod $(XLIB_OBJ) $(XPM_OBJ) $(WINDOW) $(EVENTS) $(DRAWING) $(STARFIELD) $(WIREFRAME) $(MANDELBROT) $(TEXT) $(RAYCASTER) $(IMAGE)
