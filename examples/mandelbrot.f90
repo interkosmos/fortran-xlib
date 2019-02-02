@@ -100,67 +100,68 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 
-    contains
-        integer function mandelbrot(c, max_iter, threshold)
-            !! Calculates Mandelbrot set.
-            complex, intent(in) :: c
-            integer, intent(in) :: max_iter
-            real,    intent(in) :: threshold
-            complex             :: z
+contains
 
-            z = (0.0, 0.0)
+    integer function mandelbrot(c, max_iter, threshold)
+        !! Calculates Mandelbrot set.
+        complex, intent(in) :: c
+        integer, intent(in) :: max_iter
+        real,    intent(in) :: threshold
+        complex             :: z
 
-            do mandelbrot = 0, max_iter
-                z = z**2 + c
+        z = (0.0, 0.0)
 
-                if (abs(z) > threshold) &
-                    exit
+        do mandelbrot = 0, max_iter
+            z = z**2 + c
+
+            if (abs(z) > threshold) &
+                exit
+        end do
+    end function mandelbrot
+
+    subroutine render()
+        !! Renders Mandelbrot set.
+        integer, parameter :: max_iter  = 50
+        real,    parameter :: threshold = 2.0
+        integer            :: n
+        integer            :: x, y
+        real               :: re, im
+        real               :: t1, t2
+
+        call cpu_time(t1)
+
+        do y = 0, HEIGHT
+            im = -1.5 + real(y) * 3.0 / real(HEIGHT)
+
+            do x = 0, WIDTH
+                re = -2.0 + real(x) * 3.0 / real(WIDTH)
+                n = mandelbrot(cmplx(re, im), max_iter, threshold)
+
+                if (n >= 15) then
+                    if (n >= 15 .and. n < 20) &
+                        call x_set_foreground(display, gc, purple%pixel)
+
+                    if (n >= 20 .and. n < 30) &
+                        call x_set_foreground(display, gc, indigo%pixel)
+
+                    if (n >= 30 .and. n < max_iter) &
+                        call x_set_foreground(display, gc, midnight_blue%pixel)
+
+                    if (n >= max_iter) &
+                        call x_set_foreground(display, gc, black)
+
+                    call x_draw_point(display, double_buffer, gc, x, y)
+                end if
             end do
-        end function mandelbrot
+        end do
 
-        subroutine render()
-            !! Renders Mandelbrot set.
-            integer, parameter :: max_iter  = 50
-            real,    parameter :: threshold = 2.0
-            integer            :: n
-            integer            :: x, y
-            real               :: re, im
-            real               :: t1, t2
+        call cpu_time(t2)
 
-            call cpu_time(t1)
+        print '(a, f7.5, a)', 'rendering time: ', t2 - t1, ' s'
+    end subroutine render
 
-            do y = 0, HEIGHT
-                im = -1.5 + real(y) * 3.0 / real(HEIGHT)
-
-                do x = 0, WIDTH
-                    re = -2.0 + real(x) * 3.0 / real(WIDTH)
-                    n = mandelbrot(cmplx(re, im), max_iter, threshold)
-
-                    if (n >= 15) then
-                        if (n >= 15 .and. n < 20) &
-                            call x_set_foreground(display, gc, purple%pixel)
-
-                        if (n >= 20 .and. n < 30) &
-                            call x_set_foreground(display, gc, indigo%pixel)
-
-                        if (n >= 30 .and. n < max_iter) &
-                            call x_set_foreground(display, gc, midnight_blue%pixel)
-
-                        if (n >= max_iter) &
-                            call x_set_foreground(display, gc, black)
-
-                        call x_draw_point(display, double_buffer, gc, x, y)
-                    end if
-                end do
-            end do
-
-            call cpu_time(t2)
-
-            print '(a, f7.5, a)', 'rendering time: ', t2 - t1, ' s'
-        end subroutine render
-
-        subroutine draw()
-            !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
-        end subroutine draw
+    subroutine draw()
+        !! Copies double buffer to window.
+        call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
+    end subroutine draw
 end program main

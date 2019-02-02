@@ -22,62 +22,63 @@ module vector
         real :: x, y, z
     end type point3d
 
-    contains
-        type(point2d) function project(v, width, height, fov, distance) result(p)
-            !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
-            implicit none
-            type(point3d), intent(in) :: v
-            integer,       intent(in) :: width
-            integer,       intent(in) :: height
-            real,          intent(in) :: fov
-            real,          intent(in) :: distance
-            real                      :: f
+contains
 
-            f   = fov / (distance + v%z)
-            p%x = v%x * f + width / 2
-            p%y = -1 * v%y * f + height / 2
-        end function project
+    type(point2d) function project(v, width, height, fov, distance) result(p)
+        !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
+        implicit none
+        type(point3d), intent(in) :: v
+        integer,       intent(in) :: width
+        integer,       intent(in) :: height
+        real,          intent(in) :: fov
+        real,          intent(in) :: distance
+        real                      :: f
 
-        real function rad(deg)
-            !! Converts an angle from deg to rad.
-            implicit none
-            real, intent(in) :: deg
+        f   = fov / (distance + v%z)
+        p%x = v%x * f + width / 2
+        p%y = -1 * v%y * f + height / 2
+    end function project
 
-            rad = deg * pi / 180
-        end function rad
+    real function rad(deg)
+        !! Converts an angle from deg to rad.
+        implicit none
+        real, intent(in) :: deg
 
-        type(point3d) function rotate_x(v, angle) result(r)
-            !! Rotates vector in x.
-            implicit none
-            type(point3d), intent(in) :: v
-            real,          intent(in) :: angle
+        rad = deg * pi / 180
+    end function rad
 
-            r%x = v%x
-            r%y = v%y * cos(angle) - v%z * sin(angle)
-            r%z = v%z * sin(angle) + v%z * cos(angle)
-        end function rotate_x
+    type(point3d) function rotate_x(v, angle) result(r)
+        !! Rotates vector in x.
+        implicit none
+        type(point3d), intent(in) :: v
+        real,          intent(in) :: angle
 
-        type(point3d) function rotate_y(v, angle) result(r)
-            !! Rotates vector in y.
-            implicit none
-            type(point3d), intent(in) :: v
-            real,          intent(in) :: angle
+        r%x = v%x
+        r%y = v%y * cos(angle) - v%z * sin(angle)
+        r%z = v%z * sin(angle) + v%z * cos(angle)
+    end function rotate_x
 
-            r%x = v%z * sin(angle) + v%x * cos(angle)
-            r%y = v%y
-            r%z = v%z * cos(angle) - v%x * sin(angle)
-        end function rotate_y
+    type(point3d) function rotate_y(v, angle) result(r)
+        !! Rotates vector in y.
+        implicit none
+        type(point3d), intent(in) :: v
+        real,          intent(in) :: angle
 
-        type(point3d) function rotate_z(v, angle) result(r)
-            !! Rotates vector in z.
-            implicit none
-            type(point3d), intent(in) :: v
-            real,          intent(in) :: angle
+        r%x = v%z * sin(angle) + v%x * cos(angle)
+        r%y = v%y
+        r%z = v%z * cos(angle) - v%x * sin(angle)
+    end function rotate_y
 
-            r%x = v%x * cos(angle) - v%y * sin(angle)
-            r%y = v%x * sin(angle) - v%y * cos(angle)
-            r%z = v%z
-        end function rotate_z
+    type(point3d) function rotate_z(v, angle) result(r)
+        !! Rotates vector in z.
+        implicit none
+        type(point3d), intent(in) :: v
+        real,          intent(in) :: angle
+
+        r%x = v%x * cos(angle) - v%y * sin(angle)
+        r%y = v%x * sin(angle) - v%y * cos(angle)
+        r%z = v%z
+    end function rotate_z
 end module vector
 
 module obj
@@ -94,86 +95,85 @@ module obj
 
     public :: load_obj_file
 
-    contains
-        subroutine load_obj_file(file_name)
-            !! Loads a Wavefront OBJ file.
-            character(len=*), intent(in) :: file_name       !! File name.
-            integer,          parameter  :: fh = 10         !! File handle.
-            character(len=100)           :: buffer          !! Line buffer.
-            character(len=1)             :: str             !! Temporary string.
-            integer                      :: v_size, f_size  !! Array sizes.
-            integer                      :: stat            !! I/O status.
-            type(point3d), allocatable   :: tmp_vertices(:) !! Temporary array for vertices.
-            type(face),    allocatable   :: tmp_faces(:)    !! Temporary array for faces.
+contains
 
-            allocate (vertices(1))
-            allocate (faces(1))
+    subroutine load_obj_file(file_name)
+        !! Loads a Wavefront OBJ file.
+        character(len=*), intent(in) :: file_name       !! File name.
+        integer,          parameter  :: fh = 10         !! File handle.
+        character(len=100)           :: buffer          !! Line buffer.
+        character(len=1)             :: str             !! Temporary string.
+        integer                      :: v_size, f_size  !! Array sizes.
+        integer                      :: stat            !! I/O status.
+        type(point3d), allocatable   :: tmp_vertices(:) !! Temporary array for vertices.
+        type(face),    allocatable   :: tmp_faces(:)    !! Temporary array for faces.
 
-            open (unit=fh, file=file_name, action='read', iostat=stat)
+        allocate (vertices(1))
+        allocate (faces(1))
 
-            if (stat == 0) then
-                do
-                    read(fh, '(a)', iostat=stat) buffer
+        open (unit=fh, file=file_name, action='read', iostat=stat)
 
-                    if (stat /= 0) &
-                        exit
+        if (stat == 0) then
+            do
+                read(fh, '(a)', iostat=stat) buffer
 
-                    select case (buffer(1:1))
-                        case ('v')
-                            ! Read vertice.
-                            v_size = size(vertices)
-                            allocate (tmp_vertices(v_size + 1))
-                            tmp_vertices(1:v_size) = vertices
+                if (stat /= 0) &
+                    exit
 
-                            read(buffer, *) &
-                                str, &
-                                tmp_vertices(v_size)%x, &
-                                tmp_vertices(v_size)%y, &
-                                tmp_vertices(v_size)%z
+                select case (buffer(1:1))
+                    case ('v')
+                        ! Read vertice.
+                        v_size = size(vertices)
+                        allocate (tmp_vertices(v_size + 1))
+                        tmp_vertices(1:v_size) = vertices
 
-                            call move_alloc(tmp_vertices, vertices)
-                        case ('f')
-                            ! Read face.
-                            f_size = size(faces)
-                            allocate(tmp_faces(f_size + 1))
-                            tmp_faces(1:f_size) = faces
+                        read (buffer, *) str, &
+                                         tmp_vertices(v_size)%x, &
+                                         tmp_vertices(v_size)%y, &
+                                         tmp_vertices(v_size)%z
 
-                            read(buffer, *) &
-                                str, &
-                                tmp_faces(f_size)%v1, &
-                                tmp_faces(f_size)%v2
+                        call move_alloc(tmp_vertices, vertices)
+                    case ('f')
+                        ! Read face.
+                        f_size = size(faces)
+                        allocate(tmp_faces(f_size + 1))
+                        tmp_faces(1:f_size) = faces
 
-                            call move_alloc(tmp_faces, faces)
-                        case default
-                            continue
-                    end select
-                end do
-            else
-                print *, 'Reading file "', file_name, '" failed: ', stat
-            end if
+                        read (buffer, *) str, &
+                                         tmp_faces(f_size)%v1, &
+                                         tmp_faces(f_size)%v2
 
-            close (fh)
+                        call move_alloc(tmp_faces, faces)
+                    case default
+                        continue
+                end select
+            end do
+        else
+            print *, 'Reading file "', file_name, '" failed: ', stat
+        end if
 
-            ! Resize the arrays to their actual sizes (ugly, I know ...).
-            if (allocated(tmp_vertices)) &
-                deallocate (tmp_vertices)
+        close (fh)
 
-            if (allocated(tmp_faces)) &
-                deallocate (tmp_faces)
+        ! Resize the arrays to their actual sizes (ugly, I know ...).
+        if (allocated(tmp_vertices)) &
+            deallocate (tmp_vertices)
 
-            ! Actual array sizes.
-            v_size = size(vertices) - 1
-            f_size = size(faces) - 1
+        if (allocated(tmp_faces)) &
+            deallocate (tmp_faces)
 
-            allocate (tmp_vertices(v_size))
-            allocate (tmp_faces(f_size))
+        ! Actual array sizes.
+        v_size = size(vertices) - 1
+        f_size = size(faces) - 1
 
-            tmp_vertices = vertices(1:v_size)
-            tmp_faces    = faces(1:f_size)
+        allocate (tmp_vertices(v_size))
+        allocate (tmp_faces(f_size))
 
-            call move_alloc(tmp_vertices, vertices)
-            call move_alloc(tmp_faces, faces)
-        end subroutine load_obj_file
+        tmp_vertices = vertices(1:v_size)
+        tmp_faces    = faces(1:f_size)
+
+        call move_alloc(tmp_vertices, vertices)
+        call move_alloc(tmp_faces, faces)
+    end subroutine load_obj_file
 end module obj
 
 program main
@@ -235,8 +235,10 @@ program main
 
     rc = x_alloc_named_color(display, colormap, 'SteelBlue' // c_null_char, color, color)
 
-    if (rc == 0) &
+    if (rc == 0) then
         print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
+        stop
+    end if
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
@@ -302,58 +304,59 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 
-    contains
-        subroutine microsleep(t)
-            !! Wrapper for usleep.
-            implicit none
-            integer, intent(in) :: t
+contains
 
-            call usleep(int(t, c_int32_t))
-        end subroutine microsleep
+    subroutine microsleep(t)
+        !! Wrapper for usleep.
+        implicit none
+        integer, intent(in) :: t
 
-        subroutine update(angle_x, angle_y, angle_z)
-            !! Rotates the 3-D object.
-            implicit none
-            real, intent(in) :: angle_x
-            real, intent(in) :: angle_y
-            real, intent(in) :: angle_z
-            type(point3d)    :: v
-            integer          :: i
+        call usleep(int(t, c_int32_t))
+    end subroutine microsleep
 
-            if (.not. allocated(transformed)) &
-                allocate (transformed(size(vertices)))
+    subroutine update(angle_x, angle_y, angle_z)
+        !! Rotates the 3-D object.
+        implicit none
+        real, intent(in) :: angle_x
+        real, intent(in) :: angle_y
+        real, intent(in) :: angle_z
+        type(point3d)    :: v
+        integer          :: i
 
-            do i = 1, size(vertices, 1)
-                v = vertices(i)
-                v = rotate_x(v, rad(angle_x))
-                v = rotate_y(v, rad(angle_y))
-                v = rotate_z(v, rad(angle_z))
-                transformed(i) = project(v, WIDTH, HEIGHT, 256.0, 8.0)
-            end do
-        end subroutine update
+        if (.not. allocated(transformed)) &
+            allocate (transformed(size(vertices)))
 
-        subroutine render()
-            !! Renders the scene on the double buffer.
-            implicit none
-            integer :: x1, y1, x2, y2
-            integer :: i
+        do i = 1, size(vertices, 1)
+            v = vertices(i)
+            v = rotate_x(v, rad(angle_x))
+            v = rotate_y(v, rad(angle_y))
+            v = rotate_z(v, rad(angle_z))
+            transformed(i) = project(v, WIDTH, HEIGHT, 256.0, 8.0)
+        end do
+    end subroutine update
 
-            call x_set_foreground(display, gc, black)
-            call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
-            call x_set_foreground(display, gc, color%pixel)
+    subroutine render()
+        !! Renders the scene on the double buffer.
+        implicit none
+        integer :: x1, y1, x2, y2
+        integer :: i
 
-            do i = 1, size(faces, 1)
-                x1 = int(transformed(faces(i)%v1)%x)
-                y1 = int(transformed(faces(i)%v1)%y)
-                x2 = int(transformed(faces(i)%v2)%x)
-                y2 = int(transformed(faces(i)%v2)%y)
+        call x_set_foreground(display, gc, black)
+        call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
+        call x_set_foreground(display, gc, color%pixel)
 
-                call x_draw_line(display, double_buffer, gc, x1, y1, x2, y2)
-            end do
-        end subroutine render
+        do i = 1, size(faces, 1)
+            x1 = int(transformed(faces(i)%v1)%x)
+            y1 = int(transformed(faces(i)%v1)%y)
+            x2 = int(transformed(faces(i)%v2)%x)
+            y2 = int(transformed(faces(i)%v2)%y)
 
-        subroutine draw()
-            !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
-        end subroutine draw
+            call x_draw_line(display, double_buffer, gc, x1, y1, x2, y2)
+        end do
+    end subroutine render
+
+    subroutine draw()
+        !! Copies double buffer to window.
+        call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
+    end subroutine draw
 end program main

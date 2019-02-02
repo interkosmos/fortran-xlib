@@ -101,26 +101,27 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 
-    contains
-        subroutine draw()
-            use :: xlib_types
-            implicit none
-            character(len=*), parameter :: text  = 'FORTRAN FOREVER!'
-            integer                     :: direction
-            integer                     :: ascent, descent
-            integer                     :: i
-            type(x_char_struct)         :: overall
+contains
 
-            call x_text_extents(font, text, len(text), direction, ascent, descent, overall)
+    subroutine draw()
+        use :: xlib_types
+        implicit none
+        character(len=*), parameter :: text  = 'FORTRAN FOREVER!'
+        integer                     :: direction
+        integer                     :: ascent, descent
+        integer                     :: i
+        type(x_char_struct)         :: overall
 
-            do i = 1, size(pixels)
-                call x_set_foreground(display, gc, pixels(i))
-                call x_draw_string(display, window, gc, 25, 10 + (i * 15), text, len(text))
-            end do
+        call x_text_extents(font, text, len(text), direction, ascent, descent, overall)
 
-            do i = size(pixels), 1, -1
-                call x_set_foreground(display, gc, pixels(i))
-                call x_draw_string(display, window, gc, 125, 100 - (i * 15), text, len(text))
-            end do
-        end subroutine draw
+        do i = 1, size(pixels)
+            call x_set_foreground(display, gc, pixels(i))
+            call x_draw_string(display, window, gc, 25, 10 + (i * 15), text, len(text))
+        end do
+
+        do i = size(pixels), 1, -1
+            call x_set_foreground(display, gc, pixels(i))
+            call x_draw_string(display, window, gc, 125, 100 - (i * 15), text, len(text))
+        end do
+    end subroutine draw
 end program main

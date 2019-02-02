@@ -522,49 +522,49 @@ module xlib_types
 
     ! XKeymapEvent
     type, bind(c) :: x_keymap_event
-        integer(kind=c_int)                   :: type
-        integer(kind=c_long)                  :: serial
-        logical(kind=c_bool)                  :: send_event
-        type(c_ptr)                           :: display
-        integer(kind=c_long)                  :: window
-        character(kind=c_char), dimension(32) :: key_vector
+        integer(kind=c_int)    :: type
+        integer(kind=c_long)   :: serial
+        logical(kind=c_bool)   :: send_event
+        type(c_ptr)            :: display
+        integer(kind=c_long)   :: window
+        character(kind=c_char) :: key_vector(32)
     end type x_keymap_event
 
     ! XEvent
     type, bind(c) :: x_event
-        integer(kind=c_int)                 :: type
-        type(x_any_event)                   :: x_any
-        type(x_key_event)                   :: x_key
-        type(x_button_event)                :: x_button
-        type(x_motion_event)                :: x_motion
-        type(x_crossing_event)              :: x_crossing
-        type(x_focus_change_event)          :: x_focus
-        type(x_expose_event)                :: x_expose
-        type(x_graphics_expose_event)       :: x_graphics_expose
-        type(x_no_expose_event)             :: x_no_expose
-        type(x_visibility_event)            :: x_visibility
-        type(x_create_window_event)         :: x_create_window
-        type(x_destroy_window_event)        :: x_destroy_window
-        type(x_unmap_event)                 :: x_unmap
-        type(x_map_event)                   :: x_map
-        type(x_map_request_event)           :: x_map_request
-        type(x_reparent_event)              :: x_reparent
-        type(x_configure_event)             :: x_configure
-        type(x_gravity_event)               :: x_gravity
-        type(x_resize_request_event)        :: x_resize_request
-        type(x_configure_request_event)     :: x_configure_request
-        type(x_circulate_event)             :: x_circulate
-        type(x_circulate_request_event)     :: x_circulate_request
-        type(x_property_event)              :: x_property
-        type(x_selection_clear_event)       :: x_selection_clear
-        type(x_selection_request_event)     :: x_selection_request
-        type(x_selection_event)             :: x_selection
-        type(x_colormap_event)              :: x_colormap
-        type(x_client_message_event)        :: x_client_message
-        type(x_mapping_event)               :: x_mapping
-        type(x_error_event)                 :: x_error
-        type(x_keymap_event)                :: x_keymap
-        integer(kind=c_long), dimension(24) :: pad
+        integer(kind=c_int)             :: type
+        type(x_any_event)               :: x_any
+        type(x_key_event)               :: x_key
+        type(x_button_event)            :: x_button
+        type(x_motion_event)            :: x_motion
+        type(x_crossing_event)          :: x_crossing
+        type(x_focus_change_event)      :: x_focus
+        type(x_expose_event)            :: x_expose
+        type(x_graphics_expose_event)   :: x_graphics_expose
+        type(x_no_expose_event)         :: x_no_expose
+        type(x_visibility_event)        :: x_visibility
+        type(x_create_window_event)     :: x_create_window
+        type(x_destroy_window_event)    :: x_destroy_window
+        type(x_unmap_event)             :: x_unmap
+        type(x_map_event)               :: x_map
+        type(x_map_request_event)       :: x_map_request
+        type(x_reparent_event)          :: x_reparent
+        type(x_configure_event)         :: x_configure
+        type(x_gravity_event)           :: x_gravity
+        type(x_resize_request_event)    :: x_resize_request
+        type(x_configure_request_event) :: x_configure_request
+        type(x_circulate_event)         :: x_circulate
+        type(x_circulate_request_event) :: x_circulate_request
+        type(x_property_event)          :: x_property
+        type(x_selection_clear_event)   :: x_selection_clear
+        type(x_selection_request_event) :: x_selection_request
+        type(x_selection_event)         :: x_selection
+        type(x_colormap_event)          :: x_colormap
+        type(x_client_message_event)    :: x_client_message
+        type(x_mapping_event)           :: x_mapping
+        type(x_error_event)             :: x_error
+        type(x_keymap_event)            :: x_keymap
+        integer(kind=c_long)            :: pad(24)
     end type x_event
 
     ! XGCValues
@@ -1036,13 +1036,13 @@ module xlib
             use, intrinsic :: iso_c_binding
             use :: xlib_types
             implicit none
-            type(c_ptr),                        intent(in), value :: display
-            integer(kind=c_long),               intent(in), value :: d
-            type(c_ptr),                        intent(in), value :: gc
-            type(x_point),        dimension(*), intent(in)        :: points
-            integer(kind=c_int),                intent(in), value :: npoints
-            integer(kind=c_int),                intent(in), value :: shape
-            integer(kind=c_int),                intent(in), value :: mode
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: d
+            type(c_ptr),          intent(in), value :: gc
+            type(x_point),        intent(in)        :: points(*)
+            integer(kind=c_int),  intent(in), value :: npoints
+            integer(kind=c_int),  intent(in), value :: shape
+            integer(kind=c_int),  intent(in), value :: mode
         end subroutine x_fill_polygon
 
         ! void XFillRectangle(Display *display, Drawable d, GC gc, int x, int y, unsigned int width, unsigned int height)
@@ -1076,11 +1076,11 @@ module xlib
         subroutine x_free_colors(display, colormap, pixels, npixels, planes) bind(c, name='XFreeColors')
             use, intrinsic :: iso_c_binding
             implicit none
-            type(c_ptr),                        intent(in), value :: display
-            integer(kind=c_long),               intent(in), value :: colormap
-            integer(kind=c_long), dimension(*), intent(in)        :: pixels
-            integer(kind=c_int),                intent(in), value :: npixels
-            integer(kind=c_long),               intent(in), value :: planes
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: colormap
+            integer(kind=c_long), intent(in)        :: pixels(*)
+            integer(kind=c_int),  intent(in), value :: npixels
+            integer(kind=c_long), intent(in), value :: planes
         end subroutine x_free_colors
 
         ! void XFreeFont(Display *display, XFontStruct font_struct)
@@ -1301,73 +1301,74 @@ module xlib
         end subroutine x_unload_font
     end interface
 
-    contains
-        function x_create_image(display, visual, depth, format, offset, data, width, height, bitmap_pad, bytes_per_line)
-            use :: xlib_types
-            implicit none
-            type(c_ptr),            intent(in), value   :: display
-            type(c_ptr),            intent(in), value   :: visual
-            integer(kind=c_int),    intent(in), value   :: depth
-            integer(kind=c_int),    intent(in), value   :: format
-            integer(kind=c_int),    intent(in), value   :: offset
-            character(kind=c_char), intent(in)          :: data
-            integer(kind=c_int),    intent(in), value   :: width
-            integer(kind=c_int),    intent(in), value   :: height
-            integer(kind=c_int),    intent(in), value   :: bitmap_pad
-            integer(kind=c_int),    intent(in), value   :: bytes_per_line
-            type(c_ptr)                                 :: ptr
-            type(x_image),                      pointer :: x_create_image
+contains
 
-            ptr = x_create_image_(display, visual, depth, format, offset, data, width, height, bitmap_pad, bytes_per_line)
-            call c_f_pointer(ptr, x_create_image)
-        end function x_create_image
+    function x_create_image(display, visual, depth, format, offset, data, width, height, bitmap_pad, bytes_per_line)
+        use :: xlib_types
+        implicit none
+        type(c_ptr),            intent(in), value   :: display
+        type(c_ptr),            intent(in), value   :: visual
+        integer(kind=c_int),    intent(in), value   :: depth
+        integer(kind=c_int),    intent(in), value   :: format
+        integer(kind=c_int),    intent(in), value   :: offset
+        character(kind=c_char), intent(in)          :: data
+        integer(kind=c_int),    intent(in), value   :: width
+        integer(kind=c_int),    intent(in), value   :: height
+        integer(kind=c_int),    intent(in), value   :: bitmap_pad
+        integer(kind=c_int),    intent(in), value   :: bytes_per_line
+        type(c_ptr)                                 :: ptr
+        type(x_image),                      pointer :: x_create_image
 
-        function x_load_query_font(display, name)
-            !! Returns XFontStruct from C pointer.
-            use :: xlib_types
-            implicit none
-            type(c_ptr),            intent(in), value   :: display
-            character(kind=c_char), intent(in)          :: name
-            type(c_ptr)                                 :: ptr
-            type(x_font_struct), pointer                :: x_load_query_font
+        ptr = x_create_image_(display, visual, depth, format, offset, data, width, height, bitmap_pad, bytes_per_line)
+        call c_f_pointer(ptr, x_create_image)
+    end function x_create_image
 
-            ptr = x_load_query_font_(display, name)
-            call c_f_pointer(ptr, x_load_query_font)
-        end function x_load_query_font
+    function x_load_query_font(display, name)
+        !! Returns XFontStruct from C pointer.
+        use :: xlib_types
+        implicit none
+        type(c_ptr),            intent(in), value   :: display
+        character(kind=c_char), intent(in)          :: name
+        type(c_ptr)                                 :: ptr
+        type(x_font_struct), pointer                :: x_load_query_font
 
-        subroutine x_next_event(display, event_return)
-            use :: xlib_consts
-            use :: xlib_types
-            implicit none
-            type(c_ptr),   intent(in)     :: display
-            type(x_event), intent(in out) :: event_return
+        ptr = x_load_query_font_(display, name)
+        call c_f_pointer(ptr, x_load_query_font)
+    end function x_load_query_font
 
-            call x_next_event_(display, event_return)
+    subroutine x_next_event(display, event_return)
+        use :: xlib_consts
+        use :: xlib_types
+        implicit none
+        type(c_ptr),   intent(in)     :: display
+        type(x_event), intent(in out) :: event_return
 
-            select case (event_return%type)
-                case (button_press)     ! XButtonEvent
-                    event_return%x_button = transfer(event_return, event_return%x_button)
+        call x_next_event_(display, event_return)
 
-                case (button_release)   ! XButtonEvent
-                    event_return%x_button = transfer(event_return, event_return%x_button)
+        select case (event_return%type)
+            case (button_press)     ! XButtonEvent
+                event_return%x_button = transfer(event_return, event_return%x_button)
 
-                case (client_message)   ! XClientMessageEvent
-                    event_return%x_client_message = transfer(event_return, event_return%x_client_message)
+            case (button_release)   ! XButtonEvent
+                event_return%x_button = transfer(event_return, event_return%x_button)
 
-                case (configure_notify) ! XConfigureNotifyEvent
-                    event_return%x_configure = transfer(event_return, event_return%x_configure)
+            case (client_message)   ! XClientMessageEvent
+                event_return%x_client_message = transfer(event_return, event_return%x_client_message)
 
-                case (expose)           ! XExposeEvent
-                    event_return%x_expose = transfer(event_return, event_return%x_expose)
+            case (configure_notify) ! XConfigureNotifyEvent
+                event_return%x_configure = transfer(event_return, event_return%x_configure)
 
-                case (key_press)        ! XKeyEvent
-                    event_return%x_key = transfer(event_return, event_return%x_key)
+            case (expose)           ! XExposeEvent
+                event_return%x_expose = transfer(event_return, event_return%x_expose)
 
-                case (key_release)      ! XKeyEvent
-                    event_return%x_key = transfer(event_return, event_return%x_key)
+            case (key_press)        ! XKeyEvent
+                event_return%x_key = transfer(event_return, event_return%x_key)
 
-                case (motion_notify)    ! XMotionEvent
-                    event_return%x_motion= transfer(event_return, event_return%x_motion)
-            end select
-        end subroutine x_next_event
+            case (key_release)      ! XKeyEvent
+                event_return%x_key = transfer(event_return, event_return%x_key)
+
+            case (motion_notify)    ! XMotionEvent
+                event_return%x_motion= transfer(event_return, event_return%x_motion)
+        end select
+    end subroutine x_next_event
 end module xlib

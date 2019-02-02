@@ -93,33 +93,34 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 
-    contains
-        subroutine draw()
-            ! Set background and foreground colour.
-            call x_set_background(display, gc, white)
-            call x_set_foreground(display, gc, black)
+contains
 
-            ! Set (optional) drawing styles.
-            call x_set_line_attributes(display, gc, 2, LINE_SOLID, CAP_BUTT, JOIN_BEVEL)
-            call x_set_fill_style(display, gc, FILL_SOLID)
+    subroutine draw()
+        ! Set background and foreground colour.
+        call x_set_background(display, gc, white)
+        call x_set_foreground(display, gc, black)
 
-            ! Draw lines.
-            call x_draw_line(display, window, gc, 10, 10, 200, 30)
-            call x_draw_line(display, window, gc, 50, 250, 200, 50)
+        ! Set (optional) drawing styles.
+        call x_set_line_attributes(display, gc, 2, LINE_SOLID, CAP_BUTT, JOIN_BEVEL)
+        call x_set_fill_style(display, gc, FILL_SOLID)
 
-            ! Draw rectangles.
-            call x_draw_rectangle(display, window, gc, 10, 50, 100, 100)
-            call x_set_foreground(display, gc, turquoise%pixel)
-            call x_fill_rectangle(display, window, gc, 30, 70, 100, 100)
+        ! Draw lines.
+        call x_draw_line(display, window, gc, 10, 10, 200, 30)
+        call x_draw_line(display, window, gc, 50, 250, 200, 50)
 
-            ! Draw circles.
-            call x_set_foreground(display, gc, black)
-            call x_draw_arc(display, window, gc, 200, 50, 100, 100, 0, 360 * 64)
-            call x_set_foreground(display, gc, gold%pixel)
-            call x_fill_arc(display, window, gc, 220, 70, 100, 100, 0, 360 * 64)
+        ! Draw rectangles.
+        call x_draw_rectangle(display, window, gc, 10, 50, 100, 100)
+        call x_set_foreground(display, gc, turquoise%pixel)
+        call x_fill_rectangle(display, window, gc, 30, 70, 100, 100)
 
-            ! Draw polygons.
-            call x_set_foreground(display, gc, orchid%pixel)
-            call x_fill_polygon(display, window, gc, points, 3, COMPLEX, COORD_MODE_ORIGIN)
-        end subroutine draw
+        ! Draw circles.
+        call x_set_foreground(display, gc, black)
+        call x_draw_arc(display, window, gc, 200, 50, 100, 100, 0, 360 * 64)
+        call x_set_foreground(display, gc, gold%pixel)
+        call x_fill_arc(display, window, gc, 220, 70, 100, 100, 0, 360 * 64)
+
+        ! Draw polygons.
+        call x_set_foreground(display, gc, orchid%pixel)
+        call x_fill_polygon(display, window, gc, points, 3, COMPLEX, COORD_MODE_ORIGIN)
+    end subroutine draw
 end program main

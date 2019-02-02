@@ -76,35 +76,36 @@ program main
     ! Quit gracefully.
     call quit()
 
-    contains
-        subroutine quit()
-            !! Cleans up and closes window.
-            if (pixmap > 0) &
-                call x_free_pixmap(display, pixmap)
+contains
 
-            if (shape_mask > 0) &
-                call x_free_pixmap(display, shape_mask)
+    subroutine quit()
+        !! Cleans up and closes window.
+        if (pixmap > 0) &
+            call x_free_pixmap(display, pixmap)
 
-            call x_free_gc(display, gc)
-            call x_destroy_window(display, window)
-            call x_close_display(display)
+        if (shape_mask > 0) &
+            call x_free_pixmap(display, shape_mask)
 
-            stop
-        end subroutine quit
+        call x_free_gc(display, gc)
+        call x_destroy_window(display, window)
+        call x_close_display(display)
 
-        subroutine draw()
-            !! Draws pixmap on the window.
-            implicit none
-            integer, parameter :: x = 50
-            integer, parameter :: y = 50
+        stop
+    end subroutine quit
 
-            call x_clear_window(display, window)
+    subroutine draw()
+        !! Draws pixmap on the window.
+        implicit none
+        integer, parameter :: x = 50
+        integer, parameter :: y = 50
 
-            ! Set clipping mask for transparent pixels.
-            call x_set_clip_origin(display, gc, x, y)
-            call x_set_clip_mask(display, gc, shape_mask)
+        call x_clear_window(display, window)
 
-            ! Copy pixmap to window.
-            call x_copy_area(display, pixmap, window, gc, 0, 0, 64, 64, x, y)
-        end subroutine draw
+        ! Set clipping mask for transparent pixels.
+        call x_set_clip_origin(display, gc, x, y)
+        call x_set_clip_mask(display, gc, shape_mask)
+
+        ! Copy pixmap to window.
+        call x_copy_area(display, pixmap, window, gc, 0, 0, 64, 64, x, y)
+    end subroutine draw
 end program main

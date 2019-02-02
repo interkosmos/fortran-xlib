@@ -18,41 +18,42 @@ module starfield
     public :: init
     public :: move
 
-    contains
-        subroutine init()
-            implicit none
-            integer :: i
-            real    :: r1, r2, r3
+contains
 
-            do i = 1, size(stars)
+    subroutine init()
+        implicit none
+        integer :: i
+        real    :: r1, r2, r3
+
+        do i = 1, size(stars)
+            call random_number(r1)
+            call random_number(r2)
+            call random_number(r3)
+
+            stars(i)%x = 100.0 - (r1 * 200.0)
+            stars(i)%y = 100.0 - (r2 * 200.0)
+            stars(i)%z = r3 * MAX_DEPTH
+        end do
+    end subroutine init
+
+    subroutine move()
+        implicit none
+        integer :: i
+        real    :: r1, r2
+
+        do i = 1, size(stars)
+            stars(i)%z = stars(i)%z - 0.15
+
+            if (stars(i)%z < 0.0) then
                 call random_number(r1)
                 call random_number(r2)
-                call random_number(r3)
 
                 stars(i)%x = 100.0 - (r1 * 200.0)
                 stars(i)%y = 100.0 - (r2 * 200.0)
-                stars(i)%z = r3 * MAX_DEPTH
-            end do
-        end subroutine init
-
-        subroutine move()
-            implicit none
-            integer :: i
-            real    :: r1, r2
-
-            do i = 1, size(stars)
-                stars(i)%z = stars(i)%z - 0.15
-
-                if (stars(i)%z < 0.0) then
-                    call random_number(r1)
-                    call random_number(r2)
-
-                    stars(i)%x = 100.0 - (r1 * 200.0)
-                    stars(i)%y = 100.0 - (r2 * 200.0)
-                    stars(i)%z = MAX_DEPTH
-                end if
-            end do
-        end subroutine move
+                stars(i)%z = MAX_DEPTH
+            end if
+        end do
+    end subroutine move
 end module starfield
 
 program main
@@ -160,43 +161,44 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 
-    contains
-        subroutine microsleep(t)
-            !! Wrapper for usleep.
-            implicit none
-            integer, intent(in) :: t
+contains
 
-            call usleep(int(t, c_int32_t))
-        end subroutine microsleep
+    subroutine microsleep(t)
+        !! Wrapper for usleep.
+        implicit none
+        integer, intent(in) :: t
 
-        subroutine render()
-            !! Renders the stars.
-            implicit none
-            integer :: origin_x
-            integer :: origin_y
-            integer :: i
-            integer :: x, y
-            real    :: k
+        call usleep(int(t, c_int32_t))
+    end subroutine microsleep
 
-            origin_x = WIDTH / 2
-            origin_y = HEIGHT / 2
+    subroutine render()
+        !! Renders the stars.
+        implicit none
+        integer :: origin_x
+        integer :: origin_y
+        integer :: i
+        integer :: x, y
+        real    :: k
 
-            call x_set_foreground(display, gc, black)
-            call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
+        origin_x = WIDTH / 2
+        origin_y = HEIGHT / 2
 
-            call x_set_foreground(display, gc, white)
+        call x_set_foreground(display, gc, black)
+        call x_fill_rectangle(display, double_buffer, gc, 0, 0, WIDTH, HEIGHT)
 
-            do i = 1, size(stars)
-                k = 128.0 / stars(i)%z
-                x = int(stars(i)%x * k + origin_x)
-                y = int(stars(i)%y * k + origin_y)
+        call x_set_foreground(display, gc, white)
 
-                call x_draw_point(display, double_buffer, gc, x, y)
-            end do
-        end subroutine render
+        do i = 1, size(stars)
+            k = 128.0 / stars(i)%z
+            x = int(stars(i)%x * k + origin_x)
+            y = int(stars(i)%y * k + origin_y)
 
-        subroutine draw()
-            !! Copies double buffer to window.
-            call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
-        end subroutine draw
+            call x_draw_point(display, double_buffer, gc, x, y)
+        end do
+    end subroutine render
+
+    subroutine draw()
+        !! Copies double buffer to window.
+        call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
+    end subroutine draw
 end program main
