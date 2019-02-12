@@ -14,7 +14,7 @@ program main
     implicit none
     integer,          parameter :: WIDTH     = 320
     integer,          parameter :: HEIGHT    = 240
-    character(len=*), parameter :: FILE_NAME = 'examples/bsd_daemon.xpm'
+    character(len=*), parameter :: FILE_NAME = 'examples/image/bsd_daemon.xpm'
 
     type(c_ptr)       :: display
     type(c_ptr)       :: gc

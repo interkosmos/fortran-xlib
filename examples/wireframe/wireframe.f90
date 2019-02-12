@@ -104,21 +104,19 @@ contains
         character(len=100)           :: buffer          !! Line buffer.
         character(len=1)             :: str             !! Temporary string.
         integer                      :: v_size, f_size  !! Array sizes.
-        integer                      :: stat            !! I/O status.
+        integer                      :: rc              !! I/O status.
         type(point3d), allocatable   :: tmp_vertices(:) !! Temporary array for vertices.
         type(face),    allocatable   :: tmp_faces(:)    !! Temporary array for faces.
 
         allocate (vertices(1))
         allocate (faces(1))
 
-        open (unit=fh, file=file_name, action='read', iostat=stat)
+        open (unit=fh, file=file_name, action='read', iostat=rc)
 
-        if (stat == 0) then
+        if (rc == 0) then
             do
-                read(fh, '(a)', iostat=stat) buffer
-
-                if (stat /= 0) &
-                    exit
+                read (fh, '(a)', iostat=rc) buffer
+                if (rc /= 0) exit
 
                 select case (buffer(1:1))
                     case ('v')
@@ -136,7 +134,7 @@ contains
                     case ('f')
                         ! Read face.
                         f_size = size(faces)
-                        allocate(tmp_faces(f_size + 1))
+                        allocate (tmp_faces(f_size + 1))
                         tmp_faces(1:f_size) = faces
 
                         read (buffer, *) str, &
@@ -149,7 +147,7 @@ contains
                 end select
             end do
         else
-            print *, 'Reading file "', file_name, '" failed: ', stat
+            print *, 'Reading file "', file_name, '" failed: ', rc
         end if
 
         close (fh)
@@ -186,7 +184,7 @@ program main
     implicit none
     integer,          parameter :: WIDTH     = 640
     integer,          parameter :: HEIGHT    = 480
-    character(len=*), parameter :: FILE_NAME = 'examples/tie.obj'
+    character(len=*), parameter :: FILE_NAME = 'examples/wireframe/tie.obj'
 
     type(c_ptr)                :: display
     type(c_ptr)                :: gc

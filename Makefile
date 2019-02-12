@@ -35,31 +35,31 @@ $(XLIB_OBJ):
 $(XPM_OBJ):
 	$(FC) -Wall -c $(XPM_SRC)
 
-$(WINDOW): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(WINDOW): $(DIR)/$(WINDOW)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(EVENTS): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(EVENTS): $(DIR)/$(EVENTS)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(DRAWING): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(DRAWING): $(DIR)/$(DRAWING)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(STARFIELD): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(STARFIELD): $(DIR)/$(STARFIELD)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(WIREFRAME): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(WIREFRAME): $(DIR)/$(WIREFRAME)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(MANDELBROT): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(MANDELBROT): $(DIR)/$(MANDELBROT)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(TEXT): $(DIR)/$*.f90 $(XLIB_OBJ)
+$(TEXT): $(DIR)/$(TEXT)/$*.f90 $(XLIB_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS)
 
-$(RAYCASTER): $(DIR)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
+$(RAYCASTER): $(DIR)/$(RAYCASTER)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS) -lXpm
 
-$(IMAGE): $(DIR)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
+$(IMAGE): $(DIR)/$(IMAGE)/$*.f90 $(XLIB_OBJ) $(XPM_OBJ)
 	$(FC) $(CFLAGS) -o $@ $? $(LDFLAGS) $(LIBS) -lXpm
 
 clean:

@@ -38,7 +38,7 @@ Build them with `make <name>`. Without BSD make, compile the examples manually,
 for instance:
 ```
 $ gfortran8 -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ \
-  -o window examples/window.f90 xlib.o -lX11
+  -o window examples/window/window.f90 xlib.o -lX11
 ```
 
 ## Licence

@@ -84,7 +84,8 @@ program main
 
         select case (event%type)
             case (expose)
-                call draw()
+                !! Copies doue buffer to window.
+                call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
             case (client_message)
                 long = transfer(event%x_client_message%data, long)
 
@@ -138,17 +139,19 @@ contains
                 n = mandelbrot(cmplx(re, im), max_iter, threshold)
 
                 if (n >= 15) then
-                    if (n >= 15 .and. n < 20) &
-                        call x_set_foreground(display, gc, purple%pixel)
+                    select case (n)
+                        case (15:19)
+                            call x_set_foreground(display, gc, purple%pixel)
 
-                    if (n >= 20 .and. n < 30) &
-                        call x_set_foreground(display, gc, indigo%pixel)
+                        case (20:29)
+                            call x_set_foreground(display, gc, indigo%pixel)
 
-                    if (n >= 30 .and. n < max_iter) &
-                        call x_set_foreground(display, gc, midnight_blue%pixel)
+                        case (30:max_iter - 1)
+                            call x_set_foreground(display, gc, midnight_blue%pixel)
 
-                    if (n >= max_iter) &
-                        call x_set_foreground(display, gc, black)
+                        case (max_iter:)
+                            call x_set_foreground(display, gc, black)
+                    end select
 
                     call x_draw_point(display, double_buffer, gc, x, y)
                 end if
@@ -157,11 +160,6 @@ contains
 
         call cpu_time(t2)
 
-        print '(a, f7.5, a)', 'rendering time: ', t2 - t1, ' s'
+        print '("time: ", f7.5, " s")', t2 - t1
     end subroutine render
-
-    subroutine draw()
-        !! Copies double buffer to window.
-        call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
-    end subroutine draw
 end program main
