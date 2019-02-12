@@ -138,23 +138,23 @@ contains
                 re = -2.0 + real(x) * 3.0 / real(WIDTH)
                 n = mandelbrot(cmplx(re, im), max_iter, threshold)
 
-                if (n >= 15) then
-                    select case (n)
-                        case (15:19)
-                            call x_set_foreground(display, gc, purple%pixel)
+                if (n < 15) cycle
 
-                        case (20:29)
-                            call x_set_foreground(display, gc, indigo%pixel)
+                select case (n)
+                    case (15:19)
+                        call x_set_foreground(display, gc, purple%pixel)
 
-                        case (30:max_iter - 1)
-                            call x_set_foreground(display, gc, midnight_blue%pixel)
+                    case (20:29)
+                        call x_set_foreground(display, gc, indigo%pixel)
 
-                        case (max_iter:)
-                            call x_set_foreground(display, gc, black)
-                    end select
+                    case (30:max_iter - 1)
+                        call x_set_foreground(display, gc, midnight_blue%pixel)
 
-                    call x_draw_point(display, double_buffer, gc, x, y)
-                end if
+                    case (max_iter:)
+                        call x_set_foreground(display, gc, black)
+                end select
+
+                call x_draw_point(display, double_buffer, gc, x, y)
             end do
         end do
 
