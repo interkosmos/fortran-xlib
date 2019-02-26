@@ -37,9 +37,7 @@ module raycasting
 
     public :: init
     public :: cast_ray
-
 contains
-
     subroutine init()
         implicit none
 
@@ -129,10 +127,8 @@ contains
 end module raycasting
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_null_ptr, c_null_char
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_null_ptr, c_ptr
     use :: xlib
-    use :: xlib_consts
-    use :: xlib_types
     use :: xpm
     use :: raycasting
     implicit none
@@ -171,7 +167,7 @@ program main
     end interface
 
     ! Open display.
-    display  = x_open_display(c_null_char)
+    display  = x_open_display(C_NULL_CHAR)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -184,9 +180,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran 3D' // c_null_char)
+    call x_store_name(display, window, 'Fortran 3D' // C_NULL_CHAR)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -239,9 +235,7 @@ program main
     end do
 
     call quit()
-
 contains
-
     integer function wall_color(wall, side)
         !! Returns the wall's color index.
         implicit none
@@ -264,7 +258,7 @@ contains
 
     subroutine quit()
         !! Clean up and close window.
-        call x_free_colors(display, colormap, pixels, size(pixels), int8(0))
+        call x_free_colors(display, colormap, pixels, size(pixels), int(0, kind=8))
         call x_free_pixmap(display, double_buffer)
         call x_free_gc(display, gc)
         call x_destroy_window(display, window)
@@ -278,13 +272,13 @@ contains
         implicit none
         integer :: rc, i
 
-        rc = x_alloc_named_color(display, colormap, 'DimGray'      // c_null_char, palette(1), palette(1))
-        rc = x_alloc_named_color(display, colormap, 'FireBrick'    // c_null_char, palette(2), palette(2))
-        rc = x_alloc_named_color(display, colormap, 'DarkRed'      // c_null_char, palette(3), palette(4))
-        rc = x_alloc_named_color(display, colormap, 'DarkBlue'     // c_null_char, palette(4), palette(4))
-        rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // c_null_char, palette(5), palette(5))
-        rc = x_alloc_named_color(display, colormap, 'ForestGreen'  // c_null_char, palette(6), palette(6))
-        rc = x_alloc_named_color(display, colormap, 'DarkGreen'    // c_null_char, palette(7), palette(7))
+        rc = x_alloc_named_color(display, colormap, 'DimGray'      // C_NULL_CHAR, palette(1), palette(1))
+        rc = x_alloc_named_color(display, colormap, 'FireBrick'    // C_NULL_CHAR, palette(2), palette(2))
+        rc = x_alloc_named_color(display, colormap, 'DarkRed'      // C_NULL_CHAR, palette(3), palette(4))
+        rc = x_alloc_named_color(display, colormap, 'DarkBlue'     // C_NULL_CHAR, palette(4), palette(4))
+        rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // C_NULL_CHAR, palette(5), palette(5))
+        rc = x_alloc_named_color(display, colormap, 'ForestGreen'  // C_NULL_CHAR, palette(6), palette(6))
+        rc = x_alloc_named_color(display, colormap, 'DarkGreen'    // C_NULL_CHAR, palette(7), palette(7))
 
         do i = 1, size(palette)
             pixels(i) = palette(i)%pixel

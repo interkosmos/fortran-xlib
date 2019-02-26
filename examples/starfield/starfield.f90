@@ -17,9 +17,7 @@ module starfield
 
     public :: init
     public :: move
-
 contains
-
     subroutine init()
         implicit none
         integer :: i
@@ -57,10 +55,8 @@ contains
 end module starfield
 
 program main
-    use, intrinsic :: iso_c_binding
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
     use :: xlib
-    use :: xlib_consts
-    use :: xlib_types
     use :: starfield
     implicit none
     integer, parameter :: WIDTH  = 640
@@ -92,7 +88,7 @@ program main
     end interface
 
     ! Open display.
-    display  = x_open_display(c_null_char)
+    display  = x_open_display(C_NULL_CHAR)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -103,9 +99,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -160,9 +156,7 @@ program main
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
-
 contains
-
     subroutine microsleep(t)
         !! Wrapper for usleep.
         implicit none

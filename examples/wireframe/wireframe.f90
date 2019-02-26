@@ -21,9 +21,7 @@ module vector
     type :: point3d
         real :: x, y, z
     end type point3d
-
 contains
-
     type(point2d) function project(v, width, height, fov, distance) result(p)
         !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
         implicit none
@@ -94,13 +92,11 @@ module obj
     type(face),    allocatable :: faces(:)
 
     public :: load_obj_file
-
 contains
-
     subroutine load_obj_file(file_name)
         !! Loads a Wavefront OBJ file.
         character(len=*), intent(in) :: file_name       !! File name.
-        integer,          parameter  :: fh = 10         !! File handle.
+        integer,          parameter  :: U = 10          !! Output unit.
         character(len=100)           :: buffer          !! Line buffer.
         character(len=1)             :: str             !! Temporary string.
         integer                      :: v_size, f_size  !! Array sizes.
@@ -111,11 +107,11 @@ contains
         allocate (vertices(1))
         allocate (faces(1))
 
-        open (unit=fh, file=file_name, action='read', iostat=rc)
+        open (unit=U, file=file_name, action='read', iostat=rc)
 
         if (rc == 0) then
             do
-                read (fh, '(a)', iostat=rc) buffer
+                read (U, '(a)', iostat=rc) buffer
                 if (rc /= 0) exit
 
                 select case (buffer(1:1))
@@ -150,7 +146,7 @@ contains
             print *, 'Reading file "', file_name, '" failed: ', rc
         end if
 
-        close (fh)
+        close (U)
 
         ! Resize the arrays to their actual sizes (ugly, I know ...).
         if (allocated(tmp_vertices)) &
@@ -175,10 +171,8 @@ contains
 end module obj
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char
+    use, intrinsic :: iso_c_binding, only: c_ptr, C_NULL_CHAR, c_bool, c_ptr
     use :: xlib
-    use :: xlib_consts
-    use :: xlib_types
     use :: obj
     use :: vector
     implicit none
@@ -222,7 +216,7 @@ program main
         stop
 
     ! Open display.
-    display  = x_open_display(c_null_char)
+    display  = x_open_display(C_NULL_CHAR)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -231,7 +225,7 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'SteelBlue' // c_null_char, color, color)
+    rc = x_alloc_named_color(display, colormap, 'SteelBlue' // C_NULL_CHAR, color, color)
 
     if (rc == 0) then
         print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
@@ -240,9 +234,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -296,14 +290,12 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, [ color%pixel ], 1, int8(0))
+    call x_free_colors(display, colormap, [ color%pixel ], 1, int(0, kind=8))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
-
 contains
-
     subroutine microsleep(t)
         !! Wrapper for usleep.
         implicit none

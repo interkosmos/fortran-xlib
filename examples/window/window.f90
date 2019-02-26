@@ -5,10 +5,8 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
     use :: xlib
-    use :: xlib_consts
-    use :: xlib_types
     implicit none
     integer, parameter :: WIDTH  = 640
     integer, parameter :: HEIGHT = 480
@@ -24,7 +22,7 @@ program main
     integer(kind=8)    :: white
 
     ! Create window.
-    display = x_open_display(c_null_char)
+    display = x_open_display(C_NULL_CHAR)
     screen  = x_default_screen(display)
     root    = x_default_root_window(display)
 
@@ -43,7 +41,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Set window title.
-    call x_store_name(display, window, 'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
 
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)

@@ -5,10 +5,8 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding
+    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
     use :: xlib
-    use :: xlib_consts
-    use :: xlib_types
     implicit none
     integer, parameter :: WIDTH  = 800
     integer, parameter :: HEIGHT = 600
@@ -33,7 +31,7 @@ program main
     integer(kind=8)    :: long(5)
 
     ! Open display.
-    display  = x_open_display(c_null_char)
+    display  = x_open_display(C_NULL_CHAR)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -42,15 +40,15 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // c_null_char, midnight_blue, midnight_blue)
-    rc = x_alloc_named_color(display, colormap, 'Indigo' // c_null_char, indigo, indigo)
-    rc = x_alloc_named_color(display, colormap, 'Purple' // c_null_char, purple, purple)
+    rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // C_NULL_CHAR, midnight_blue, midnight_blue)
+    rc = x_alloc_named_color(display, colormap, 'Indigo' // C_NULL_CHAR, indigo, indigo)
+    rc = x_alloc_named_color(display, colormap, 'Purple' // C_NULL_CHAR, purple, purple)
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // c_null_char)
+    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -84,7 +82,7 @@ program main
 
         select case (event%type)
             case (expose)
-                !! Copies doue buffer to window.
+                ! Copies double buffer to window.
                 call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
             case (client_message)
                 long = transfer(event%x_client_message%data, long)
@@ -95,14 +93,12 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, [ midnight_blue%pixel, indigo%pixel, purple%pixel ], 3, int8(0))
+    call x_free_colors(display, colormap, [ midnight_blue%pixel, indigo%pixel, purple%pixel ], 3, int(0, kind=8))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
-
 contains
-
     integer function mandelbrot(c, max_iter, threshold)
         !! Calculates Mandelbrot set.
         complex, intent(in) :: c

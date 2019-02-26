@@ -1,7 +1,7 @@
 # f03xlib
-An ISO C binding interface to Xlib for Fortran 2003/2008/2018. Currently, only a
-subset of Xlib is implemented. In order to work with XPM files, an interface to
-`libxpm` is provided by `xpm.f90`.
+An ISO C binding interface to Xlib for Fortran 2003. Currently, only a subset of
+Xlib is implemented. In order to work with XPM files, an interface to `libxpm`
+is provided by `xpm.f90`.
 
 ## Build
 You can use BSD make (`bmake` on Linux) to compile everything. Build the Xlib
