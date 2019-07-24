@@ -14,7 +14,6 @@ module xpm
         function xpm_read_file_to_image_(display, file_name, image_return, shape_image_return, attributes) &
                 bind(c, name='XpmReadFileToImage')
             import :: c_char, c_int, c_ptr
-            implicit none
             type(c_ptr),            intent(in),  value :: display
             character(kind=c_char), intent(in)         :: file_name
             type(c_ptr),            intent(out)        :: image_return
@@ -27,7 +26,6 @@ module xpm
         function xpm_read_file_to_pixmap(display, d, file_name, pixmap_return, shapemask_return, attributes) &
                 bind(c, name='XpmReadFileToPixmap')
             import :: c_char, c_int, c_long, c_ptr
-            implicit none
             type(c_ptr),            intent(in), value :: display
             integer(kind=c_long),   intent(in), value :: d
             character(kind=c_char), intent(in)        :: file_name
@@ -39,7 +37,6 @@ module xpm
     end interface
 contains
     function xpm_read_file_to_image(display, file_name, image_return, shape_image_return, attributes)
-        implicit none
         type(c_ptr),            intent(in), value :: display
         character(len=*),       intent(in)        :: file_name
         type(x_image), pointer, intent(out)       :: image_return
