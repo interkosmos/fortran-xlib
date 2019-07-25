@@ -22,7 +22,8 @@ $ make xpm
 ## Examples
 ![Screen Shot](screenshot.png)
 
-Example programmes utilising the interface can be found in the directory `examples`:
+Example programs utilising the interface can be found in the directory
+`examples/`:
 
 * **drawing** draws some shapes on the window.
 * **events** captures X11 events.
@@ -40,6 +41,7 @@ for instance:
 $ gfortran8 -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ \
   -o window examples/window/window.f90 xlib.o -lX11
 ```
+The `-Wl,-rpath` parameter might be optional.
 
 ## Licence
 ISC

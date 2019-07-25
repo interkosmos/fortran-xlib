@@ -39,7 +39,6 @@ module raycasting
     public :: cast_ray
 contains
     subroutine init()
-        implicit none
 
         pos%x  =  10.0; pos%y   = 2.0
         dir%x  =  -1.0; dir%y   = 0.0
@@ -127,7 +126,7 @@ contains
 end module raycasting
 
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_null_ptr, c_ptr
     use :: xlib
     use :: xpm
     use :: raycasting
@@ -161,13 +160,12 @@ program main
         subroutine usleep(useconds) bind(c)
             !! Interface to usleep in libc.
             use, intrinsic :: iso_c_binding, only: c_int32_t
-            implicit none
             integer(c_int32_t), value :: useconds
         end subroutine
     end interface
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -180,9 +178,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran 3D' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran 3D' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -238,7 +236,6 @@ program main
 contains
     integer function wall_color(wall, side)
         !! Returns the wall's color index.
-        implicit none
         integer, intent(in) :: wall
         integer, intent(in) :: side
 
@@ -250,7 +247,6 @@ contains
 
     subroutine micro_sleep(t)
         !! Wrapper for usleep.
-        implicit none
         integer, intent(in) :: t
 
         call usleep(int(t, c_int32_t))
@@ -269,16 +265,15 @@ contains
 
     subroutine alloc_colors()
         !! Allocates the colours.
-        implicit none
         integer :: rc, i
 
-        rc = x_alloc_named_color(display, colormap, 'DimGray'      // C_NULL_CHAR, palette(1), palette(1))
-        rc = x_alloc_named_color(display, colormap, 'FireBrick'    // C_NULL_CHAR, palette(2), palette(2))
-        rc = x_alloc_named_color(display, colormap, 'DarkRed'      // C_NULL_CHAR, palette(3), palette(4))
-        rc = x_alloc_named_color(display, colormap, 'DarkBlue'     // C_NULL_CHAR, palette(4), palette(4))
-        rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // C_NULL_CHAR, palette(5), palette(5))
-        rc = x_alloc_named_color(display, colormap, 'ForestGreen'  // C_NULL_CHAR, palette(6), palette(6))
-        rc = x_alloc_named_color(display, colormap, 'DarkGreen'    // C_NULL_CHAR, palette(7), palette(7))
+        rc = x_alloc_named_color(display, colormap, 'DimGray'      // c_null_char, palette(1), palette(1))
+        rc = x_alloc_named_color(display, colormap, 'FireBrick'    // c_null_char, palette(2), palette(2))
+        rc = x_alloc_named_color(display, colormap, 'DarkRed'      // c_null_char, palette(3), palette(4))
+        rc = x_alloc_named_color(display, colormap, 'DarkBlue'     // c_null_char, palette(4), palette(4))
+        rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // c_null_char, palette(5), palette(5))
+        rc = x_alloc_named_color(display, colormap, 'ForestGreen'  // c_null_char, palette(6), palette(6))
+        rc = x_alloc_named_color(display, colormap, 'DarkGreen'    // c_null_char, palette(7), palette(7))
 
         do i = 1, size(palette)
             pixels(i) = palette(i)%pixel
@@ -287,7 +282,6 @@ contains
 
     subroutine key_down(key)
         !! Reacts to key down events.
-        implicit none
         integer, intent(in) :: key
         real                :: speed = 0.25
         real                :: angle = 0.1
@@ -310,7 +304,6 @@ contains
 
     subroutine move(move_speed)
         !! Moves the player.
-        implicit none
         real, intent(in) :: move_speed
         type(point2d)    :: next_pos
 
@@ -330,7 +323,6 @@ contains
 
     subroutine rotate(angle)
         !! Rotates the player.
-        implicit none
         real, intent(in) :: angle
         real             :: old_dir_x
         real             :: old_plane_x
@@ -346,7 +338,6 @@ contains
 
     subroutine tick()
         !! Limits the number of frames per second.
-        implicit none
         real :: fps
         real :: frame_time
 
@@ -370,7 +361,6 @@ contains
 
     subroutine render()
         !! Renders the scene.
-        implicit none
         integer :: x, y1, y2
         integer :: wall, side, color
 

@@ -5,7 +5,7 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
     use :: xlib
     implicit none
     integer, parameter :: WIDTH  = 800
@@ -31,7 +31,7 @@ program main
     integer(kind=8)    :: long(5)
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -40,15 +40,15 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // C_NULL_CHAR, midnight_blue, midnight_blue)
-    rc = x_alloc_named_color(display, colormap, 'Indigo' // C_NULL_CHAR, indigo, indigo)
-    rc = x_alloc_named_color(display, colormap, 'Purple' // C_NULL_CHAR, purple, purple)
+    rc = x_alloc_named_color(display, colormap, 'MidnightBlue' // c_null_char, midnight_blue, midnight_blue)
+    rc = x_alloc_named_color(display, colormap, 'Indigo' // c_null_char, indigo, indigo)
+    rc = x_alloc_named_color(display, colormap, 'Purple' // c_null_char, purple, purple)
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.

@@ -5,7 +5,7 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
     use :: xlib
     implicit none
     integer, parameter :: WIDTH  = 320
@@ -31,7 +31,7 @@ program main
     integer(kind=8)              :: pixels(5)
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -40,11 +40,11 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'HotPink'     // C_NULL_CHAR, colors(1), colors(1))
-    rc = x_alloc_named_color(display, colormap, 'Lime'        // C_NULL_CHAR, colors(2), colors(2))
-    rc = x_alloc_named_color(display, colormap, 'Orange'      // C_NULL_CHAR, colors(3), colors(3))
-    rc = x_alloc_named_color(display, colormap, 'Turquoise'   // C_NULL_CHAR, colors(4), colors(4))
-    rc = x_alloc_named_color(display, colormap, 'SpringGreen' // C_NULL_CHAR, colors(5), colors(5))
+    rc = x_alloc_named_color(display, colormap, 'HotPink'     // c_null_char, colors(1), colors(1))
+    rc = x_alloc_named_color(display, colormap, 'Lime'        // c_null_char, colors(2), colors(2))
+    rc = x_alloc_named_color(display, colormap, 'Orange'      // c_null_char, colors(3), colors(3))
+    rc = x_alloc_named_color(display, colormap, 'Turquoise'   // c_null_char, colors(4), colors(4))
+    rc = x_alloc_named_color(display, colormap, 'SpringGreen' // c_null_char, colors(5), colors(5))
 
     do i = 1, size(colors)
         pixels(i) = colors(i)%pixel
@@ -52,9 +52,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -70,7 +70,7 @@ program main
     gc = x_create_gc(display, window, 0, values)
 
     ! Load and set font.
-    font => x_load_query_font(display, 'fixed' // C_NULL_CHAR)
+    font => x_load_query_font(display, 'fixed' // c_null_char)
     call x_set_font(display, gc, font%fid)
 
     ! Show window.
@@ -100,7 +100,6 @@ program main
     call x_close_display(display)
 contains
     subroutine draw()
-        implicit none
         character(len=*), parameter :: text = 'FORTRAN FOREVER!'
         integer                     :: direction
         integer                     :: ascent, descent

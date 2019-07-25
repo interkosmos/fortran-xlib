@@ -5,7 +5,7 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
     use :: xlib
     implicit none
     type(c_ptr)       :: display
@@ -34,7 +34,7 @@ program main
     points(3)%y = 290
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -44,26 +44,26 @@ program main
     white = x_white_pixel(display, screen)
 
     ! See https://en.wikipedia.org/wiki/X11_color_names for more colours.
-    rc = x_alloc_named_color(display, colormap, 'Gold' // C_NULL_CHAR, gold, gold)
+    rc = x_alloc_named_color(display, colormap, 'Gold' // c_null_char, gold, gold)
 
     if (rc == 0) &
         print *, 'XAllocNamedColor failed to allocate "Gold" colour.'
 
-    rc = x_alloc_named_color(display, colormap, 'Orchid' // C_NULL_CHAR, orchid, orchid)
+    rc = x_alloc_named_color(display, colormap, 'Orchid' // c_null_char, orchid, orchid)
 
     if (rc == 0) &
         print *, 'XAllocNamedColor failed to allocate "Orchid" colour.'
 
-    rc = x_alloc_named_color(display, colormap, 'Turquoise' // C_NULL_CHAR, turquoise, turquoise)
+    rc = x_alloc_named_color(display, colormap, 'Turquoise' // c_null_char, turquoise, turquoise)
 
     if (rc == 0) &
        print *, 'XAllocNamedColor failed to allocate "Turquoise" colour.'
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, 400, 300, 0, black, white)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Create graphics context.

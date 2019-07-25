@@ -24,7 +24,6 @@ module vector
 contains
     type(point2d) function project(v, width, height, fov, distance) result(p)
         !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
-        implicit none
         type(point3d), intent(in) :: v
         integer,       intent(in) :: width
         integer,       intent(in) :: height
@@ -39,7 +38,6 @@ contains
 
     real function rad(deg)
         !! Converts an angle from deg to rad.
-        implicit none
         real, intent(in) :: deg
 
         rad = deg * pi / 180
@@ -47,7 +45,6 @@ contains
 
     type(point3d) function rotate_x(v, angle) result(r)
         !! Rotates vector in x.
-        implicit none
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
 
@@ -58,7 +55,6 @@ contains
 
     type(point3d) function rotate_y(v, angle) result(r)
         !! Rotates vector in y.
-        implicit none
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
 
@@ -69,7 +65,6 @@ contains
 
     type(point3d) function rotate_z(v, angle) result(r)
         !! Rotates vector in z.
-        implicit none
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
 
@@ -171,7 +166,7 @@ contains
 end module obj
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_ptr, C_NULL_CHAR, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_bool, c_ptr
     use :: xlib
     use :: obj
     use :: vector
@@ -205,7 +200,6 @@ program main
         subroutine usleep(useconds) bind(c)
             !! Interface to usleep in libc.
             use, intrinsic :: iso_c_binding, only: c_int32_t
-            implicit none
             integer(c_int32_t), value :: useconds
         end subroutine
     end interface
@@ -216,7 +210,7 @@ program main
         stop
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -225,7 +219,7 @@ program main
     black = x_black_pixel(display, screen)
     white = x_white_pixel(display, screen)
 
-    rc = x_alloc_named_color(display, colormap, 'SteelBlue' // C_NULL_CHAR, color, color)
+    rc = x_alloc_named_color(display, colormap, 'SteelBlue' // c_null_char, color, color)
 
     if (rc == 0) then
         print *, 'XAllocNamedColor failed to allocate "SteelBlue" colour.'
@@ -234,9 +228,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -298,7 +292,6 @@ program main
 contains
     subroutine microsleep(t)
         !! Wrapper for usleep.
-        implicit none
         integer, intent(in) :: t
 
         call usleep(int(t, c_int32_t))
@@ -306,7 +299,6 @@ contains
 
     subroutine update(angle_x, angle_y, angle_z)
         !! Rotates the 3-D object.
-        implicit none
         real, intent(in) :: angle_x
         real, intent(in) :: angle_y
         real, intent(in) :: angle_z
@@ -327,7 +319,6 @@ contains
 
     subroutine render()
         !! Renders the scene on the double buffer.
-        implicit none
         integer :: x1, y1, x2, y2
         integer :: i
 

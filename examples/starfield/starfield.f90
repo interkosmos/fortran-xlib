@@ -19,7 +19,6 @@ module starfield
     public :: move
 contains
     subroutine init()
-        implicit none
         integer :: i
         real    :: r1, r2, r3
 
@@ -35,7 +34,6 @@ contains
     end subroutine init
 
     subroutine move()
-        implicit none
         integer :: i
         real    :: r1, r2
 
@@ -55,7 +53,7 @@ contains
 end module starfield
 
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
     use :: xlib
     use :: starfield
     implicit none
@@ -82,13 +80,12 @@ program main
         subroutine usleep(useconds) bind(c)
             !! Interface to usleep in libc.
             use iso_c_binding
-            implicit none
             integer(c_int32_t), value :: useconds
         end subroutine
     end interface
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -99,9 +96,9 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, white, black)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Prevent resizing.
@@ -159,7 +156,6 @@ program main
 contains
     subroutine microsleep(t)
         !! Wrapper for usleep.
-        implicit none
         integer, intent(in) :: t
 
         call usleep(int(t, c_int32_t))
@@ -167,7 +163,6 @@ contains
 
     subroutine render()
         !! Renders the stars.
-        implicit none
         integer :: origin_x
         integer :: origin_y
         integer :: i

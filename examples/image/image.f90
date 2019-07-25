@@ -6,7 +6,7 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: C_NULL_CHAR, c_bool, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_null_ptr, c_ptr
     use :: xlib
     use :: xpm
     implicit none
@@ -30,7 +30,7 @@ program main
     integer(kind=8)   :: wm_delete_window
 
     ! Open display.
-    display  = x_open_display(C_NULL_CHAR)
+    display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
@@ -41,16 +41,16 @@ program main
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, WIDTH, HEIGHT, 0, black, white)
-    call x_store_name(display, window, 'Fortran' // C_NULL_CHAR)
+    call x_store_name(display, window, 'Fortran' // c_null_char)
 
-    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // C_NULL_CHAR, .false._c_bool)
+    wm_delete_window = x_intern_atom(display, 'WM_DELETE_WINDOW' // c_null_char, .false._c_bool)
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Create graphics context.
     gc = x_create_gc(display, window, 0, values)
 
     ! Read XPM image from file.
-    rc = xpm_read_file_to_pixmap(display, window, FILE_NAME // C_NULL_CHAR, pixmap, shape_mask, c_null_ptr)
+    rc = xpm_read_file_to_pixmap(display, window, FILE_NAME // c_null_char, pixmap, shape_mask, c_null_ptr)
 
     if (rc < 0) &
         call quit() ! Fatal error.
@@ -91,7 +91,6 @@ contains
 
     subroutine draw()
         !! Draws pixmap on the window.
-        implicit none
         integer, parameter :: x = 50
         integer, parameter :: y = 50
 
