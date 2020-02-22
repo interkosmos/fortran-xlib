@@ -1,4 +1,4 @@
-# fortran-xlib: Fortran 2004 interfaces to Xlib
+# fortran-xlib: Fortran 2003 interfaces to Xlib
 A collection of ISO C binding interfaces to Xlib for Fortran 2003. Currently,
 only a subset of Xlib is implemented. In order to work with XPM files,
 interfaces to libxpm are provided by `xpm.f90`.
