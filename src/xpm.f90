@@ -1,13 +1,21 @@
 ! xpm.f90
 !
-! Interface to XPM for Fortran 2003/2008.
+! Interface to XPM for Fortran 2003.
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
 module xpm
     use, intrinsic :: iso_c_binding
-    use :: xlib
+    use :: xlib, only: x_image
     implicit none
+    private
+
+    ! C bindings.
+    public :: xpm_read_file_to_image_
+    public :: xpm_read_file_to_pixmap
+
+    ! Wrapper functions and routines.
+    public :: xpm_read_file_to_image
 
     interface
         ! int XpmReadFileToImage(Display *display, char *filename, XImage *image_return, XImage *shapeimage_return, XpmAttributes *attributes)

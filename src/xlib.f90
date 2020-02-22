@@ -1,12 +1,23 @@
 ! xlib.f90
 !
-! Interface to Xlib for Fortran 2003/2008.
+! Interface to Xlib for Fortran 2003.
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
 module xlib
     use, intrinsic :: iso_c_binding
     implicit none
+
+    ! Type aliases.
+    integer, parameter :: c_uint8_t            = c_int8_t
+    integer, parameter :: c_uint16_t           = c_int16_t
+    integer, parameter :: c_uint32_t           = c_int32_t
+    integer, parameter :: c_uint64_t           = c_int64_t
+    integer, parameter :: c_unsigned           = c_int
+    integer, parameter :: c_unsigned_char      = c_signed_char
+    integer, parameter :: c_unsigned_long      = c_long
+    integer, parameter :: c_unsigned_long_long = c_long_long
+    integer, parameter :: c_unsigned_short     = c_short
 
     ! XSizeHint flags.
     integer(kind=c_long), parameter :: US_POSITION   = ishft(1, 0)
@@ -470,59 +481,59 @@ module xlib
 
     ! XColormapEvent
     type, bind(c) :: x_colormap_event
-        integer(kind=c_int)  :: type
-        integer(kind=c_long) :: serial
-        logical(kind=c_bool) :: send_event
-        type(c_ptr)          :: display
-        integer(kind=c_long) :: window
-        integer(kind=c_long) :: colormap
-        logical(kind=c_bool) :: new
-        integer(kind=c_int)  :: state
+        integer(kind=c_int)           :: type
+        integer(kind=c_unsigned_long) :: serial
+        logical(kind=c_bool)          :: send_event
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: window
+        integer(kind=c_long)          :: colormap
+        logical(kind=c_bool)          :: new
+        integer(kind=c_int)           :: state
     end type x_colormap_event
 
     ! XClientMessageEvent
     type, bind(c) :: x_client_message_event
-        integer(kind=c_int)  :: type
-        integer(kind=c_long) :: serial
-        logical(kind=c_bool) :: send_event
-        type(c_ptr)          :: display
-        integer(kind=c_long) :: window
-        integer(kind=c_long) :: message_type
-        integer(kind=c_int)  :: format
-        type(c_ptr)          :: data
+        integer(kind=c_int)           :: type
+        integer(kind=c_unsigned_long) :: serial
+        logical(kind=c_bool)          :: send_event
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: window
+        integer(kind=c_long)          :: message_type
+        integer(kind=c_int)           :: format
+        type(c_ptr)                   :: data
     end type x_client_message_event
 
     ! XMappingEvent
     type, bind(c) :: x_mapping_event
-        integer(kind=c_int)  :: type
-        integer(kind=c_long) :: serial
-        logical(kind=c_bool) :: send_event
-        type(c_ptr)          :: display
-        integer(kind=c_long) :: window
-        integer(kind=c_int)  :: request
-        integer(kind=c_int)  :: first_keycode
-        integer(kind=c_int)  :: count
+        integer(kind=c_int)           :: type
+        integer(kind=c_unsigned_long) :: serial
+        logical(kind=c_bool)          :: send_event
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: window
+        integer(kind=c_int)           :: request
+        integer(kind=c_int)           :: first_keycode
+        integer(kind=c_int)           :: count
     end type x_mapping_event
 
     ! XErrorEvent
     type, bind(c) :: x_error_event
-        integer(kind=c_int)           :: type
-        type(c_ptr)                   :: display
-        integer(kind=c_long)          :: resourceid
-        integer(kind=c_long)          :: serial
-        character(kind=c_signed_char) :: error_code
-        character(kind=c_signed_char) :: request_code
-        character(kind=c_signed_char) :: minor_code
+        integer(kind=c_int)             :: type
+        type(c_ptr)                     :: display
+        integer(kind=c_unsigned_long)   :: serial
+        character(kind=c_unsigned_char) :: error_code
+        character(kind=c_unsigned_char) :: request_code
+        character(kind=c_unsigned_char) :: minor_code
+        integer(kind=c_long)            :: resource_id
     end type x_error_event
 
     ! XKeymapEvent
     type, bind(c) :: x_keymap_event
-        integer(kind=c_int)    :: type
-        integer(kind=c_long)   :: serial
-        logical(kind=c_bool)   :: send_event
-        type(c_ptr)            :: display
-        integer(kind=c_long)   :: window
-        character(kind=c_char) :: key_vector(32)
+        integer(kind=c_int)           :: type
+        integer(kind=c_unsigned_long) :: serial
+        logical(kind=c_bool)          :: send_event
+        type(c_ptr)                   :: display
+        integer(kind=c_long)          :: window
+        character(kind=c_char)        :: key_vector(32)
     end type x_keymap_event
 
     ! XEvent
@@ -687,6 +698,71 @@ module xlib
         type(c_ptr)          :: obdata
         type(funcs)          :: f
     end type x_image
+
+    ! C bindings.
+    public :: x_alloc_named_color
+    public :: x_alloc_size_hints
+    public :: x_black_pixel
+    public :: x_create_gc
+    public :: x_create_image_
+    public :: x_create_pixmap
+    public :: x_create_simple_window
+    public :: x_default_colormap
+    public :: x_default_depth
+    public :: x_default_visual
+    public :: x_default_root_window
+    public :: x_default_screen
+    public :: x_get_pixel
+    public :: x_init_threads
+    public :: x_intern_atom
+    public :: x_load_query_font_
+    public :: x_open_display
+    public :: x_pending
+    public :: x_set_wm_protocols
+    public :: x_white_pixel
+    public :: x_clear_window
+    public :: x_close_display
+    public :: x_copy_area
+    public :: x_destroy_image
+    public :: x_destroy_window
+    public :: x_draw_arc
+    public :: x_draw_line
+    public :: x_draw_point
+    public :: x_draw_rectangle
+    public :: x_draw_string
+    public :: x_fill_arc
+    public :: x_fill_polygon
+    public :: x_fill_rectangle
+    public :: x_flush
+    public :: x_free
+    public :: x_free_colors
+    public :: x_free_font
+    public :: x_free_gc
+    public :: x_free_pixmap
+    public :: x_map_window
+    public :: x_next_event_
+    public :: x_put_image
+    public :: x_put_pixel
+    public :: x_select_input
+    public :: x_set_background
+    public :: x_set_clip_mask
+    public :: x_set_clip_origin
+    public :: x_set_fill_style
+    public :: x_set_font
+    public :: x_set_foreground
+    public :: x_set_line_attributes
+    public :: x_set_stipple
+    public :: x_set_ts_origin
+    public :: x_set_wm_normal_hints
+    public :: x_store_name
+    public :: x_sync
+    public :: x_text_extents
+    public :: x_unload_font
+
+    ! Wrapper functions and routines.
+    public :: x_create_image
+    public :: x_load_query_font
+    public :: x_next_event
 
     interface
         ! Status XAllocNamedColor(Display *display, Colormap colormap, char *color_name, XColor *screen_def_return, XColor *exact_def_return)

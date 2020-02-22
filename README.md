@@ -1,20 +1,23 @@
-# f03xlib
-An ISO C binding interface to Xlib for Fortran 2003. Currently, only a subset of
-Xlib is implemented. In order to work with XPM files, an interface to libxpm is
-provided by `xpm.f90`.
+# fortran-xlib: Fortran 2004 interfaces to Xlib
+A collection of ISO C binding interfaces to Xlib for Fortran 2003. Currently,
+only a subset of Xlib is implemented. In order to work with XPM files,
+interfaces to libxpm are provided by `xpm.f90`.
 
 ## Build
-You can use BSD make (`bmake` on Linux) to compile everything. Build the Xlib
-interface with:
+Build the Xlib interfaces with:
+
 ```
 $ make xlib
 ```
+
 Or run your favourite Fortran compiler directly:
+
 ```
-$ gfortran8 -c xlib.f90
+$ gfortran9 -c src/xlib.f90
 ```
 
-Build the XPM interface with:
+Build the XPM interfaces with:
+
 ```
 $ make xpm
 ```
@@ -22,7 +25,7 @@ $ make xpm
 ## Examples
 ![Screen Shot](screenshot.png)
 
-Example programs utilising the interface can be found in the directory
+Example programs utilising the interfaces can be found in the directory
 `examples/`:
 
 * **drawing** draws some shapes on the window.
@@ -35,13 +38,12 @@ Example programs utilising the interface can be found in the directory
 * **window** displays a simple window.
 * **wireframe** renders a wire-frame model of a Tie Fighter.
 
-Build them with `make <name>`. Without BSD make, compile the examples manually,
-for instance:
+Build them with `make <name>` or compile them manually, for instance:
+
 ```
-$ gfortran8 -Wl,-rpath=/usr/local/lib/gcc8/ -I/usr/local/include/ -L/usr/local/lib/ \
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ \
   -o window examples/window/window.f90 xlib.o -lX11
 ```
-The `-Wl,-rpath` parameter might be optional.
 
 ## Licence
 ISC
