@@ -41,8 +41,7 @@ Example programs utilising the interfaces can be found in the directory
 Build them with `make <name>` or compile them manually, for instance:
 
 ```
-$ gfortran -I/usr/local/include/ -L/usr/local/lib/ \
-  -o window examples/window/window.f90 xlib.o -lX11
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o window examples/window/window.f90 xlib.o -lX11
 ```
 
 ## Licence
