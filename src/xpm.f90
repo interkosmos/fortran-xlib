@@ -45,13 +45,13 @@ module xpm
     end interface
 contains
     function xpm_read_file_to_image(display, file_name, image_return, shape_image_return, attributes)
-        type(c_ptr),            intent(in), value :: display
-        character(len=*),       intent(in)        :: file_name
-        type(x_image), pointer, intent(out)       :: image_return
-        type(x_image), pointer, intent(out)       :: shape_image_return
-        type(c_ptr),            intent(in)        :: attributes
-        type(c_ptr)                               :: ptr1, ptr2
-        integer                                   :: xpm_read_file_to_image
+        type(c_ptr),            intent(in)  :: display
+        character(len=*),       intent(in)  :: file_name
+        type(x_image), pointer, intent(out) :: image_return
+        type(x_image), pointer, intent(out) :: shape_image_return
+        type(c_ptr),            intent(in)  :: attributes
+        type(c_ptr)                         :: ptr1, ptr2
+        integer                             :: xpm_read_file_to_image
 
         xpm_read_file_to_image = xpm_read_file_to_image_(display, file_name, ptr1, ptr2, attributes)
 

@@ -1,26 +1,16 @@
-# fortran-xlib: Fortran 2003 interfaces to Xlib
+# fortran-xlib: Fortran 2003 Interfaces to Xlib
 A collection of ISO C binding interfaces to Xlib for Fortran 2003. Currently,
 only a subset of Xlib is implemented. In order to work with XPM files,
-interfaces to libxpm are provided by `xpm.f90`.
+interfaces to `libxpm` are included.
 
 ## Build
-Build the Xlib interfaces with:
+Build the interface bindings with:
 
 ```
-$ make xlib
+$ make
 ```
 
-Or run your favourite Fortran compiler directly:
-
-```
-$ gfortran9 -c src/xlib.f90
-```
-
-Build the XPM interfaces with:
-
-```
-$ make xpm
-```
+Link your Fortran applications with `libfortran-xlib.a -lX11`.
 
 ## Examples
 ![Screen Shot](screenshot.png)
@@ -41,7 +31,7 @@ Example programs utilising the interfaces can be found in the directory
 Build them with `make <name>` or compile them manually, for instance:
 
 ```
-$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o window examples/window/window.f90 xlib.o -lX11
+$ gfortran -I/usr/local/include/ -L/usr/local/lib/ -o window examples/window/window.f90 libfortran-xlib.a -lX11
 ```
 
 ## Licence
