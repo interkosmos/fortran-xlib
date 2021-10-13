@@ -10,7 +10,20 @@ Build the interface bindings with:
 $ make
 ```
 
-Link your Fortran applications with `libfortran-xlib.a -lX11`.
+Then, link your Fortran applications against `libfortran-xlib.a -lX11`.
+Or, run *fpm* instead:
+
+```
+$ fpm build --profile release
+```
+
+The *fpm* script does not build any examples. You can add *fortran-xlib* as a
+*fpm* dependency:
+
+```toml
+[dependencies]
+fortran-xlib = { git = "https://github.com/interkosmos/fortran-xlib.git" }
+```
 
 ## Examples
 ![Screen Shot](screenshot.png)

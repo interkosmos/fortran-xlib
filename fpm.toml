@@ -1,0 +1,14 @@
+name = "fortran-xlib"
+version = "0.1.0"
+license = "ISC"
+author = "Philipp Engel"
+maintainer = "@interkosmos"
+copyright = "Copyright (c) 2021, Philipp Engel"
+description = "Fortran 2003 ISO C binding interfaces to Xlib."
+keywords = ["x11", "xlib", "xpm"]
+
+[build]
+link = ["X11", "Xpm"]
+
+[library]
+source-dir = "src"
