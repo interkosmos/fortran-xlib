@@ -930,6 +930,16 @@ module xlib
             integer(kind=c_int)            :: x_pending
         end function x_pending
 
+       ! int XResizeWindow(Display *display, Window w, unsigned int width, unsigned int height)
+        function x_resize_window(display, w, width, height) bind(c, name='XResizeWindow')
+            import :: c_int, c_long, c_ptr
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: w
+            integer(kind=c_int),  intent(in), value :: width
+            integer(kind=c_int),  intent(in), value :: height
+            integer(kind=c_int)                     :: x_resize_window
+        end function x_resize_window
+
         ! Status XSetWMProtocols(Display *display, Window w, Atom *protocols, int count)
         function x_set_wm_protocols(display, w, protocols, count) bind(c, name='XSetWMProtocols')
             import :: c_int, c_long, c_ptr
@@ -1169,15 +1179,6 @@ module xlib
             integer(kind=c_int),  intent(in), value :: y
             integer(kind=c_long), intent(in), value :: pixel
         end subroutine x_put_pixel
-
-        ! void XResizeWindow(Display *display, Window w, unsigned int width, unsigned int height)
-        subroutine x_resize_window(display, w, width, height) bind(c, name='XResizeWindow')
-            import :: c_int, c_long, c_ptr
-            type(c_ptr),          intent(in), value :: display
-            integer(kind=c_long), intent(in), value :: w
-            integer(kind=c_int),  intent(in), value :: width
-            integer(kind=c_int),  intent(in), value :: height
-        end subroutine x_resize_window
 
         ! void XSelectInput(Display *display, Window w, long event_mask)
         subroutine x_select_input(display, w, event_mask) bind(c, name='XSelectInput')
