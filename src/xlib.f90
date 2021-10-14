@@ -743,6 +743,7 @@ module xlib
     public :: x_next_event_
     public :: x_put_image
     public :: x_put_pixel
+    public :: x_resize_window
     public :: x_select_input
     public :: x_set_background
     public :: x_set_clip_mask
@@ -1168,6 +1169,15 @@ module xlib
             integer(kind=c_int),  intent(in), value :: y
             integer(kind=c_long), intent(in), value :: pixel
         end subroutine x_put_pixel
+
+        ! void XResizeWindow(Display *display, Window w, unsigned int width, unsigned int height)
+        subroutine x_resize_window(display, w, width, height) bind(c, name='XResizeWindow')
+            import :: c_int, c_long, c_ptr
+            type(c_ptr),          intent(in), value :: display
+            integer(kind=c_long), intent(in), value :: w
+            integer(kind=c_int),  intent(in), value :: width
+            integer(kind=c_int),  intent(in), value :: height
+        end subroutine x_resize_window
 
         ! void XSelectInput(Display *display, Window w, long event_mask)
         subroutine x_select_input(display, w, event_mask) bind(c, name='XSelectInput')
