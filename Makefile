@@ -20,9 +20,12 @@ TEXT       = text
 WINDOW     = window
 WIREFRAME  = wireframe
 
-.PHONY: all clean
+.PHONY: all clean examples
 
 all: $(TARGET)
+
+examples: $(DRAWING) $(EVENTS) $(IMAGE) $(MANDELBROT) $(RAYCASTER) \
+          $(STARFIELD) $(TEXT) $(WINDOW) $(WIREFRAME)
 
 $(TARGET):
 	$(FC) $(FFLAGS) -c src/xlib.f90

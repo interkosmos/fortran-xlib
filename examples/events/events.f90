@@ -5,21 +5,17 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     implicit none
-    type(c_ptr)       :: display
-    type(c_ptr)       :: gc
-    type(x_event)     :: event
-    type(x_gc_values) :: values
-    integer           :: rc
-    integer           :: screen
-    integer(kind=8)   :: root
-    integer(kind=8)   :: window
-    integer(kind=8)   :: black
-    integer(kind=8)   :: white
-    integer(kind=8)   :: wm_delete_window
-    integer(kind=8)   :: l(5)
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: long(5)
+    integer(kind=c_long) :: root, window
+    integer(kind=c_long) :: wm_delete_window
+    type(c_ptr)          :: display, gc
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
 
     ! Create window.
     display = x_open_display(c_null_char)
@@ -35,7 +31,7 @@ program main
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     call x_set_background(display, gc, white)
     call x_set_foreground(display, gc, black)
@@ -61,10 +57,8 @@ program main
                 print *, 'height: ', event%x_configure%height
             case (client_message)
                 print *, 'ClientMessage'
-                l = transfer(event%x_client_message%data, l)
-
-                if (l(1) == wm_delete_window) &
-                    exit
+                long = transfer(event%x_client_message%data, long)
+                if (long(1) == wm_delete_window) exit
             case (key_press)
                 print *, 'KeyPress'
         end select

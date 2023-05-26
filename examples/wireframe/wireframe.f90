@@ -7,7 +7,8 @@
 ! Licence: ISC
 module vector
     implicit none
-    real, parameter :: pi = acos(-1.0)
+
+    real, parameter :: PI = acos(-1.0)
 
     public :: project
     public :: rotate_x
@@ -22,7 +23,7 @@ module vector
         real :: x, y, z
     end type point3d
 contains
-    type(point2d) function project(v, width, height, fov, distance) result(p)
+    elemental type(point2d) function project(v, width, height, fov, distance) result(p)
         !! Transforms a 3-D vector to a 2-D vector by using perspective projection.
         type(point3d), intent(in) :: v
         integer,       intent(in) :: width
@@ -36,14 +37,14 @@ contains
         p%y = -1 * v%y * f + height / 2
     end function project
 
-    real function rad(deg)
+    elemental real function rad(deg)
         !! Converts an angle from deg to rad.
         real, intent(in) :: deg
 
-        rad = deg * pi / 180
+        rad = deg * PI / 180
     end function rad
 
-    type(point3d) function rotate_x(v, angle) result(r)
+    elemental type(point3d) function rotate_x(v, angle) result(r)
         !! Rotates vector in x.
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
@@ -53,7 +54,7 @@ contains
         r%z = v%z * sin(angle) + v%z * cos(angle)
     end function rotate_x
 
-    type(point3d) function rotate_y(v, angle) result(r)
+    elemental type(point3d) function rotate_y(v, angle) result(r)
         !! Rotates vector in y.
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
@@ -63,7 +64,7 @@ contains
         r%z = v%z * cos(angle) - v%x * sin(angle)
     end function rotate_y
 
-    type(point3d) function rotate_z(v, angle) result(r)
+    elemental type(point3d) function rotate_z(v, angle) result(r)
         !! Rotates vector in z.
         type(point3d), intent(in) :: v
         real,          intent(in) :: angle
@@ -90,65 +91,64 @@ module obj
 contains
     subroutine load_obj_file(file_name)
         !! Loads a Wavefront OBJ file.
-        character(len=*), intent(in) :: file_name       !! File name.
-        integer,          parameter  :: U = 10          !! Output unit.
-        character(len=100)           :: buffer          !! Line buffer.
-        character(len=1)             :: str             !! Temporary string.
-        integer                      :: v_size, f_size  !! Array sizes.
-        integer                      :: rc              !! I/O status.
-        type(point3d), allocatable   :: tmp_vertices(:) !! Temporary array for vertices.
-        type(face),    allocatable   :: tmp_faces(:)    !! Temporary array for faces.
+        character(len=*), intent(in) :: file_name
+
+        character(len=100)         :: buffer
+        character                  :: a
+        integer                    :: v_size, f_size
+        integer                    :: fu, rc
+        type(point3d), allocatable :: tmp_vertices(:)
+        type(face),    allocatable :: tmp_faces(:)
 
         allocate (vertices(1))
         allocate (faces(1))
 
-        open (unit=U, file=file_name, action='read', iostat=rc)
+        open (action='read', file=file_name, iostat=rc, newunit=fu)
 
-        if (rc == 0) then
-            do
-                read (U, '(a)', iostat=rc) buffer
-                if (rc /= 0) exit
-
-                select case (buffer(1:1))
-                    case ('v')
-                        ! Read vertice.
-                        v_size = size(vertices)
-                        allocate (tmp_vertices(v_size + 1))
-                        tmp_vertices(1:v_size) = vertices
-
-                        read (buffer, *) str, &
-                                         tmp_vertices(v_size)%x, &
-                                         tmp_vertices(v_size)%y, &
-                                         tmp_vertices(v_size)%z
-
-                        call move_alloc(tmp_vertices, vertices)
-                    case ('f')
-                        ! Read face.
-                        f_size = size(faces)
-                        allocate (tmp_faces(f_size + 1))
-                        tmp_faces(1:f_size) = faces
-
-                        read (buffer, *) str, &
-                                         tmp_faces(f_size)%v1, &
-                                         tmp_faces(f_size)%v2
-
-                        call move_alloc(tmp_faces, faces)
-                    case default
-                        continue
-                end select
-            end do
-        else
-            print *, 'Reading file "', file_name, '" failed: ', rc
+        if (rc /= 0) then
+            close (fu)
+            print '(3a, i0)', 'Reading file "', file_name, '" failed: ', rc
+            return
         end if
 
-        close (U)
+        do
+            read (fu, '(a)', iostat=rc) buffer
+            if (rc /= 0) exit
+
+            select case (buffer(1:1))
+                case ('v')
+                    ! Read vertice.
+                    v_size = size(vertices)
+                    allocate (tmp_vertices(v_size + 1))
+                    tmp_vertices(1:v_size) = vertices
+
+                    read (buffer, *) a, &
+                                     tmp_vertices(v_size)%x, &
+                                     tmp_vertices(v_size)%y, &
+                                     tmp_vertices(v_size)%z
+
+                    call move_alloc(tmp_vertices, vertices)
+                case ('f')
+                    ! Read face.
+                    f_size = size(faces)
+                    allocate (tmp_faces(f_size + 1))
+                    tmp_faces(1:f_size) = faces
+
+                    read (buffer, *) a, &
+                                     tmp_faces(f_size)%v1, &
+                                     tmp_faces(f_size)%v2
+
+                    call move_alloc(tmp_faces, faces)
+                case default
+                    continue
+            end select
+        end do
+
+        close (fu)
 
         ! Resize the arrays to their actual sizes (ugly, I know ...).
-        if (allocated(tmp_vertices)) &
-            deallocate (tmp_vertices)
-
-        if (allocated(tmp_faces)) &
-            deallocate (tmp_faces)
+        if (allocated(tmp_vertices)) deallocate (tmp_vertices)
+        if (allocated(tmp_faces))    deallocate (tmp_faces)
 
         ! Actual array sizes.
         v_size = size(vertices) - 1
@@ -166,43 +166,38 @@ contains
 end module obj
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_ptr, c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     use :: obj
     use :: vector
     implicit none
+
+    interface
+        subroutine c_usleep(useconds) bind(c, name='usleep')
+            !! Interface to usleep in libc.
+            import :: c_int32_t
+            implicit none
+            integer(c_int32_t), value :: useconds
+        end subroutine c_usleep
+    end interface
+
     integer,          parameter :: WIDTH     = 640
     integer,          parameter :: HEIGHT    = 480
     character(len=*), parameter :: FILE_NAME = 'examples/wireframe/tie.obj'
 
-    type(c_ptr)                :: display
-    type(c_ptr)                :: gc
-    type(x_color)              :: color
-    type(x_event)              :: event
-    type(x_gc_values)          :: values
-    type(x_size_hints)         :: size_hints
-    integer                    :: screen
-    integer                    :: rc
-    integer(kind=8)            :: root
-    integer(kind=8)            :: colormap
-    integer(kind=8)            :: double_buffer
-    integer(kind=8)            :: black
-    integer(kind=8)            :: white
-    integer(kind=8)            :: window
-    integer(kind=8)            :: wm_delete_window
-    integer(kind=8)            :: long(5)
-    type(point2d), allocatable :: transformed(:)
-    real                       :: angle_x = 0.0
-    real                       :: angle_y = 0.0
-    real                       :: angle_z = 0.0
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, double_buffer
+    integer(kind=c_long) :: long(5), wm_delete_window
+    integer(kind=c_long) :: root, window
+    real                 :: angle_x, angle_y, angle_z
+    type(c_ptr)          :: display, gc
+    type(x_color)        :: color
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
+    type(x_size_hints)   :: size_hints
 
-    interface
-        subroutine usleep(useconds) bind(c)
-            !! Interface to usleep in libc.
-            use, intrinsic :: iso_c_binding, only: c_int32_t
-            integer(c_int32_t), value :: useconds
-        end subroutine
-    end interface
+    type(point2d), allocatable :: transformed(:)
 
     call load_obj_file(FILE_NAME)
 
@@ -243,7 +238,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     call x_set_background(display, gc, black)
     call x_set_foreground(display, gc, white)
@@ -254,6 +249,10 @@ program main
     ! Show window.
     call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
     call x_map_window(display, window)
+
+    angle_x = 0.0
+    angle_y = 0.0
+    angle_z = 0.0
 
     do
         rc = x_pending(display)
@@ -266,47 +265,40 @@ program main
                     ! call draw()
                 case (client_message)
                     long = transfer(event%x_client_message%data, long)
-
-                    if (long(1) == wm_delete_window) &
-                        exit
+                    if (long(1) == wm_delete_window) exit
             end select
-        else
-            call update(angle_x, angle_y, angle_z)
-            call render()
 
-            ! angle_x = angle_x + 1.0
-            angle_y = angle_y + 1.0
-            ! angle_z = angle_z + 1.0
-
-            call draw()
-            call microsleep(25000)
+            cycle
         end if
+
+        call update(angle_x, angle_y, angle_z)
+        call render()
+
+        ! angle_x = angle_x + 1.0
+        angle_y = angle_y + 1.0
+        ! angle_z = angle_z + 1.0
+
+        call draw()
+        call c_usleep(25000)
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, [ color%pixel ], 1, int(0, kind=8))
+    call x_free_colors(display, colormap, [ color%pixel ], 1, int(0, kind=c_long))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
 contains
-    subroutine microsleep(t)
-        !! Wrapper for usleep.
-        integer, intent(in) :: t
-
-        call usleep(int(t, c_int32_t))
-    end subroutine microsleep
-
     subroutine update(angle_x, angle_y, angle_z)
         !! Rotates the 3-D object.
         real, intent(in) :: angle_x
         real, intent(in) :: angle_y
         real, intent(in) :: angle_z
-        type(point3d)    :: v
-        integer          :: i
 
-        if (.not. allocated(transformed)) &
-            allocate (transformed(size(vertices)))
+        type(point3d) :: v
+        integer       :: i
+
+        if (.not. allocated(transformed)) allocate (transformed(size(vertices)))
 
         do i = 1, size(vertices, 1)
             v = vertices(i)

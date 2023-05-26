@@ -5,25 +5,18 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     implicit none
-    type(c_ptr)       :: display
-    type(c_ptr)       :: gc
-    type(x_color)     :: gold
-    type(x_color)     :: orchid
-    type(x_color)     :: turquoise
-    type(x_event)     :: event
-    type(x_gc_values) :: values
-    type(x_point)     :: points(3)
-    integer           :: screen
-    integer           :: rc
-    integer(kind=8)   :: root
-    integer(kind=8)   :: colormap
-    integer(kind=8)   :: black
-    integer(kind=8)   :: white
-    integer(kind=8)   :: window
-    integer(kind=8)   :: wm_delete_window
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, root, window
+    integer(kind=c_long) :: wm_delete_window
+    type(c_ptr)          :: display, gc
+    type(x_color)        :: gold, orchid, turquoise
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
+    type(x_point)        :: points(3)
 
     ! The coordinates of the polygon.
     points(1)%x = 200
@@ -45,19 +38,13 @@ program main
 
     ! See https://en.wikipedia.org/wiki/X11_color_names for more colours.
     rc = x_alloc_named_color(display, colormap, 'Gold' // c_null_char, gold, gold)
-
-    if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocate "Gold" colour.'
+    if (rc == 0) print *, 'XAllocNamedColor failed to allocate "Gold" colour.'
 
     rc = x_alloc_named_color(display, colormap, 'Orchid' // c_null_char, orchid, orchid)
-
-    if (rc == 0) &
-        print *, 'XAllocNamedColor failed to allocate "Orchid" colour.'
+    if (rc == 0) print *, 'XAllocNamedColor failed to allocate "Orchid" colour.'
 
     rc = x_alloc_named_color(display, colormap, 'Turquoise' // c_null_char, turquoise, turquoise)
-
-    if (rc == 0) &
-       print *, 'XAllocNamedColor failed to allocate "Turquoise" colour.'
+    if (rc == 0) print *, 'XAllocNamedColor failed to allocate "Turquoise" colour.'
 
     ! Create window.
     window = x_create_simple_window(display, root, 0, 0, 400, 300, 0, black, white)
@@ -67,7 +54,7 @@ program main
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     ! Show window.
     call x_select_input(display, window, ior(EXPOSURE_MASK, STRUCTURE_NOTIFY_MASK))
@@ -86,7 +73,7 @@ program main
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, [ gold%pixel, orchid%pixel, turquoise%pixel ], 3, int(0, kind=8))
+    call x_free_colors(display, colormap, [ gold%pixel, orchid%pixel, turquoise%pixel ], 3, int(0, kind=c_long))
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)

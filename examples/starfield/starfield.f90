@@ -20,32 +20,29 @@ module starfield
 contains
     subroutine init()
         integer :: i
-        real    :: r1, r2, r3
+        real    :: r(3)
 
         do i = 1, size(stars)
-            call random_number(r1)
-            call random_number(r2)
-            call random_number(r3)
+            call random_number(r)
 
-            stars(i)%x = 100.0 - (r1 * 200.0)
-            stars(i)%y = 100.0 - (r2 * 200.0)
-            stars(i)%z = r3 * MAX_DEPTH
+            stars(i)%x = 100.0 - (r(1) * 200.0)
+            stars(i)%y = 100.0 - (r(2) * 200.0)
+            stars(i)%z = r(3) * MAX_DEPTH
         end do
     end subroutine init
 
     subroutine move()
         integer :: i
-        real    :: r1, r2
+        real    :: r(2)
 
         do i = 1, size(stars)
             stars(i)%z = stars(i)%z - 0.15
 
             if (stars(i)%z < 0.0) then
-                call random_number(r1)
-                call random_number(r2)
+                call random_number(r)
 
-                stars(i)%x = 100.0 - (r1 * 200.0)
-                stars(i)%y = 100.0 - (r2 * 200.0)
+                stars(i)%x = 100.0 - (r(1) * 200.0)
+                stars(i)%y = 100.0 - (r(2) * 200.0)
                 stars(i)%z = MAX_DEPTH
             end if
         end do
@@ -53,36 +50,32 @@ contains
 end module starfield
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     use :: starfield
     implicit none
+
+    interface
+        subroutine c_usleep(useconds) bind(c, name='usleep')
+            !! Interface to usleep in libc.
+            import :: c_int32_t
+            implicit none
+            integer(c_int32_t), value :: useconds
+        end subroutine c_usleep
+    end interface
+
     integer, parameter :: WIDTH  = 640
     integer, parameter :: HEIGHT = 480
 
-    type(c_ptr)        :: display
-    type(c_ptr)        :: gc
-    type(x_event)      :: event
-    type(x_gc_values)  :: values
-    type(x_size_hints) :: size_hints
-    integer            :: screen
-    integer            :: rc
-    integer(kind=8)    :: root
-    integer(kind=8)    :: colormap
-    integer(kind=8)    :: black
-    integer(kind=8)    :: white
-    integer(kind=8)    :: window
-    integer(kind=8)    :: double_buffer
-    integer(kind=8)    :: wm_delete_window
-    integer(kind=8)    :: long(5)
-
-    interface
-        subroutine usleep(useconds) bind(c)
-            !! Interface to usleep in libc.
-            use iso_c_binding
-            integer(c_int32_t), value :: useconds
-        end subroutine
-    end interface
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, double_buffer
+    integer(kind=c_long) :: long(5)
+    integer(kind=c_long) :: root, window, wm_delete_window
+    type(c_ptr)          :: display, gc
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
+    type(x_size_hints)   :: size_hints
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -111,7 +104,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     ! Create double buffer.
     double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
@@ -136,15 +129,13 @@ program main
             select case(event%type)
                 case(client_message)
                     long = transfer(event%x_client_message%data, long)
-
-                    if (long(1) == wm_delete_window) &
-                        exit
+                    if (long(1) == wm_delete_window) exit
             end select
 
             call move()
             call render()
             call draw()
-            call microsleep(1000)
+            call c_usleep(1000)
         end if
     end do
 
@@ -154,19 +145,10 @@ program main
     call x_destroy_window(display, window)
     call x_close_display(display)
 contains
-    subroutine microsleep(t)
-        !! Wrapper for usleep.
-        integer, intent(in) :: t
-
-        call usleep(int(t, c_int32_t))
-    end subroutine microsleep
-
     subroutine render()
         !! Renders the stars.
-        integer :: origin_x
-        integer :: origin_y
-        integer :: i
-        integer :: x, y
+        integer :: origin_x, origin_y
+        integer :: i, x, y
         real    :: k
 
         origin_x = WIDTH / 2

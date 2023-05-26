@@ -5,30 +5,22 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     implicit none
     integer, parameter :: WIDTH  = 800
     integer, parameter :: HEIGHT = 600
 
-    type(c_ptr)        :: display
-    type(c_ptr)        :: gc
-    type(x_event)      :: event
-    type(x_gc_values)  :: values
-    type(x_size_hints) :: size_hints
-    type(x_color)      :: midnight_blue
-    type(x_color)      :: indigo
-    type(x_color)      :: purple
-    integer            :: screen
-    integer            :: rc
-    integer(kind=8)    :: root
-    integer(kind=8)    :: colormap
-    integer(kind=8)    :: black
-    integer(kind=8)    :: white
-    integer(kind=8)    :: window
-    integer(kind=8)    :: double_buffer
-    integer(kind=8)    :: wm_delete_window
-    integer(kind=8)    :: long(5)
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, root, window
+    integer(kind=c_long) :: double_buffer, wm_delete_window
+    integer(kind=c_long) :: long(5)
+    type(c_ptr)          :: display, gc
+    type(x_color)        :: midnight_blue, indigo, purple
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
+    type(x_size_hints)   :: size_hints
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -61,7 +53,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     ! Create double buffer.
     double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
@@ -86,20 +78,18 @@ program main
                 call x_copy_area(display, double_buffer, window, gc, 0, 0, WIDTH, HEIGHT, 0, 0)
             case (client_message)
                 long = transfer(event%x_client_message%data, long)
-
-                if (long(1) == wm_delete_window) &
-                    exit
+                if (long(1) == wm_delete_window) exit
         end select
     end do
 
     ! Clean up and close window.
-    call x_free_colors(display, colormap, [ midnight_blue%pixel, indigo%pixel, purple%pixel ], 3, int(0, kind=8))
+    call x_free_colors(display, colormap, [ midnight_blue%pixel, indigo%pixel, purple%pixel ], 3, int(0, kind=c_long))
     call x_free_pixmap(display, double_buffer)
     call x_free_gc(display, gc)
     call x_destroy_window(display, window)
     call x_close_display(display)
 contains
-    integer function mandelbrot(c, max_iter, threshold)
+    pure integer function mandelbrot(c, max_iter, threshold)
         !! Calculates Mandelbrot set.
         complex, intent(in) :: c
         integer, intent(in) :: max_iter
@@ -110,9 +100,7 @@ contains
 
         do mandelbrot = 0, max_iter
             z = z**2 + c
-
-            if (abs(z) > threshold) &
-                exit
+            if (abs(z) > threshold) exit
         end do
     end function mandelbrot
 
@@ -120,10 +108,11 @@ contains
         !! Renders Mandelbrot set.
         integer, parameter :: max_iter  = 50
         real,    parameter :: threshold = 2.0
-        integer            :: n
-        integer            :: x, y
-        real               :: re, im
-        real               :: t1, t2
+
+        integer :: n
+        integer :: x, y
+        real    :: re, im
+        real    :: t1, t2
 
         call cpu_time(t1)
 

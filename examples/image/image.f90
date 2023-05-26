@@ -14,26 +14,23 @@ program main
     integer,          parameter :: HEIGHT    = 240
     character(len=*), parameter :: FILE_NAME = 'examples/image/bsd_daemon.xpm'
 
-    type(c_ptr)       :: display
-    type(c_ptr)       :: gc
-    type(x_event)     :: event
-    type(x_gc_values) :: values
-    integer           :: screen
-    integer           :: rc
-    integer(kind=8)   :: root
-    integer(kind=8)   :: colormap
-    integer(kind=8)   :: black
-    integer(kind=8)   :: white
-    integer(kind=8)   :: window
-    integer(kind=8)   :: pixmap = 0
-    integer(kind=8)   :: shape_mask = 0
-    integer(kind=8)   :: wm_delete_window
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, pixmap, shape_mask
+    integer(kind=c_long) :: root, window
+    integer(kind=c_long) :: wm_delete_window
+    type(c_ptr)          :: display, gc
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
 
     ! Open display.
     display  = x_open_display(c_null_char)
     screen   = x_default_screen(display)
     root     = x_default_root_window(display)
     colormap = x_default_colormap(display, screen)
+
+    pixmap     = 0
+    shape_mask = 0
 
     ! Define colours.
     black = x_black_pixel(display, screen)
@@ -47,7 +44,7 @@ program main
     rc = x_set_wm_protocols(display, window, wm_delete_window, 1)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     ! Read XPM image from file.
     rc = xpm_read_file_to_pixmap(display, window, FILE_NAME // c_null_char, pixmap, shape_mask, c_null_ptr)

@@ -5,21 +5,18 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     implicit none
     integer, parameter :: WIDTH  = 640
     integer, parameter :: HEIGHT = 480
 
-    type(c_ptr)        :: display
-    type(c_ptr)        :: gc
-    type(x_gc_values)  :: values
-    type(x_size_hints) :: size_hints
-    integer            :: screen
-    integer(kind=8)    :: root
-    integer(kind=8)    :: window
-    integer(kind=8)    :: black
-    integer(kind=8)    :: white
+    integer              :: screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: root, window
+    type(c_ptr)          :: display, gc
+    type(x_gc_values)    :: values
+    type(x_size_hints)   :: size_hints
 
     ! Create window.
     display = x_open_display(c_null_char)
@@ -44,7 +41,7 @@ program main
     call x_store_name(display, window, 'Fortran' // c_null_char)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     call x_set_background(display, gc, white)
     call x_set_foreground(display, gc, black)

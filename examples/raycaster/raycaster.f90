@@ -6,17 +6,17 @@
 !
 ! Author:  Philipp Engel
 ! Licence: ISC
-module raycasting
+module raycast
     implicit none
 
     type :: point2d
         real :: x, y
     end type point2d
 
-    integer, parameter :: map_width  = 12
-    integer, parameter :: map_height = 12
+    integer, parameter :: MAP_WIDTH  = 12
+    integer, parameter :: MAP_HEIGHT = 12
 
-    integer, dimension(map_width, map_height) :: map = reshape( &
+    integer, dimension(MAP_WIDTH, MAP_HEIGHT) :: map = reshape( &
         [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, &
           1, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 1, &
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
@@ -29,7 +29,7 @@ module raycasting
           1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, &
           1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 1, &
           1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1 ], &
-        [ map_height, map_width ] )
+        [ MAP_HEIGHT, MAP_WIDTH ])
 
     type(point2d) :: pos
     type(point2d) :: dir
@@ -39,7 +39,6 @@ module raycasting
     public :: cast_ray
 contains
     subroutine init()
-
         pos%x  =  10.0; pos%y   = 2.0
         dir%x  =  -1.0; dir%y   = 0.0
         plane%x =  0.0; plane%y = 0.66
@@ -53,14 +52,15 @@ contains
         integer, intent(out) :: y2
         integer, intent(out) :: wall
         integer, intent(out) :: side
-        integer              :: line_length
-        integer              :: map_x, map_y
-        integer              :: step_x, step_y
-        real                 :: dist
-        type(point2d)        :: camera
-        type(point2d)        :: delta_dist
-        type(point2d)        :: ray_dir
-        type(point2d)        :: side_dist
+
+        integer       :: line_length
+        integer       :: map_x, map_y
+        integer       :: step_x, step_y
+        real          :: dist
+        type(point2d) :: camera
+        type(point2d) :: delta_dist
+        type(point2d) :: ray_dir
+        type(point2d) :: side_dist
 
         camera%x  = 2 * x / real(width) - 1
         ray_dir%x = dir%x + plane%x * camera%x
@@ -114,55 +114,47 @@ contains
         line_length = int(height / dist)
 
         y1 = -line_length / 2 + height / 2
-
-        if (y1 < 0) &
-            y1 = 0
+        if (y1 < 0) y1 = 0
 
         y2 = line_length / 2 + height / 2
-
-        if (y2 >= height) &
-            y2 = height - 1
+        if (y2 >= height) y2 = height - 1
     end subroutine cast_ray
-end module raycasting
+end module raycast
 
 program main
-    use, intrinsic :: iso_c_binding, only: c_null_char, c_bool, c_null_ptr, c_ptr
+    use, intrinsic :: iso_c_binding
     use :: xlib
     use :: xpm
-    use :: raycasting
+    use :: raycast
     implicit none
+
+    interface
+        subroutine c_usleep(useconds) bind(c, name='usleep')
+            !! Interface to usleep in libc.
+            import :: c_int32_t
+            implicit none
+            integer(c_int32_t), value :: useconds
+        end subroutine c_usleep
+    end interface
+
     integer, parameter :: WIDTH  = 640
     integer, parameter :: HEIGHT = 450
 
-    logical            :: done = .false.
-    integer            :: rc
-    integer            :: screen
-    integer(kind=8)    :: root
-    integer(kind=8)    :: window
-    integer(kind=8)    :: double_buffer
-    integer(kind=8)    :: wm_delete_window
-    integer(kind=8)    :: colormap
-    integer(kind=8)    :: black
-    integer(kind=8)    :: white
-    integer(kind=8)    :: long(5)
-    integer(kind=8)    :: pixels(7)
-    type(x_color)      :: palette(7)
-    type(x_event)      :: event
-    type(x_gc_values)  :: values
-    type(x_size_hints) :: size_hints
-    type(c_ptr)        :: display
-    type(c_ptr)        :: gc
-    real               :: time
-    real               :: old_time
-    real               :: min_time = 0.05
+    integer              :: rc, screen
+    integer(kind=c_long) :: black, white
+    integer(kind=c_long) :: colormap, double_buffer
+    integer(kind=c_long) :: long(5), pixels(7)
+    integer(kind=c_long) :: root, window, wm_delete_window
+    logical              :: done
+    real                 :: min_time, old_time, time
+    type(c_ptr)          :: display, gc
+    type(x_color)        :: palette(7)
+    type(x_event)        :: event
+    type(x_gc_values)    :: values
+    type(x_size_hints)   :: size_hints
 
-    interface
-        subroutine usleep(useconds) bind(c)
-            !! Interface to usleep in libc.
-            use, intrinsic :: iso_c_binding, only: c_int32_t
-            integer(c_int32_t), value :: useconds
-        end subroutine
-    end interface
+    done = .false.
+    min_time = 0.05
 
     ! Open display.
     display  = x_open_display(c_null_char)
@@ -193,7 +185,7 @@ program main
     call x_set_wm_normal_hints(display, window, size_hints)
 
     ! Create graphics context.
-    gc = x_create_gc(display, window, 0, values)
+    gc = x_create_gc(display, window, int(0, kind=c_long), values)
 
     ! Create double buffer.
     double_buffer = x_create_pixmap(display, window, WIDTH, HEIGHT, 24)
@@ -215,14 +207,12 @@ program main
             call x_next_event(display, event)
 
             select case (event%type)
-                case (client_message)
+                case (CLIENT_MESSAGE)
                     long = transfer(event%x_client_message%data, long)
-
-                    if (long(1) == wm_delete_window) &
-                        done = .true.
-                case (expose)
+                    if (long(1) == wm_delete_window) done = .true.
+                case (EXPOSE)
                     ! call draw()
-                case (key_press)
+                case (KEY_PRESS)
                     call key_down(event%x_key%keycode)
             end select
         else
@@ -240,27 +230,17 @@ contains
         integer, intent(in) :: side
 
         wall_color = 1 + (wall * 2)
-
-        if (side == 1) &
-            wall_color = wall_color - 1
+        if (side == 1) wall_color = wall_color - 1
     end function wall_color
-
-    subroutine micro_sleep(t)
-        !! Wrapper for usleep.
-        integer, intent(in) :: t
-
-        call usleep(int(t, c_int32_t))
-    end subroutine micro_sleep
 
     subroutine quit()
         !! Clean up and close window.
-        call x_free_colors(display, colormap, pixels, size(pixels), int(0, kind=8))
+        call x_free_colors(display, colormap, pixels, size(pixels), int(0, kind=c_long))
         call x_free_pixmap(display, double_buffer)
         call x_free_gc(display, gc)
         call x_destroy_window(display, window)
         call x_close_display(display)
-
-        call exit(0)
+        stop
     end subroutine quit
 
     subroutine alloc_colors()
@@ -282,9 +262,10 @@ contains
 
     subroutine key_down(key)
         !! Reacts to key down events.
+        real, parameter :: SPEED = 0.25
+        real, parameter :: ANGLE = 0.1
+
         integer, intent(in) :: key
-        real                :: speed = 0.25
-        real                :: angle = 0.1
 
         ! print *, key
 
@@ -292,13 +273,13 @@ contains
             case (24) ! q
                 done = .true.
             case (43) ! h
-                call rotate(angle)
+                call rotate(ANGLE)
             case (44) ! j
-                call move(speed)
+                call move(SPEED)
             case (45) ! k
-                call move(-speed)
+                call move(-SPEED)
             case (46) ! l
-                call rotate(-angle)
+                call rotate(-ANGLE)
         end select
     end subroutine key_down
 
@@ -310,9 +291,8 @@ contains
         next_pos%x = pos%x + dir%x * move_speed
         next_pos%y = pos%y + dir%y * move_speed
 
-        if (next_pos%x <= 1 .or. next_pos%x >= map_width - 1 .or. &
-            next_pos%y <= 1 .or. next_pos%y >= map_height - 1) &
-            return
+        if (next_pos%x <= 1 .or. next_pos%x >= MAP_WIDTH - 1 .or. &
+            next_pos%y <= 1 .or. next_pos%y >= MAP_HEIGHT - 1) return
 
         if (map(int(next_pos%y) + 1, int(pos%x) + 1) == 0) &
             pos%y = next_pos%y
@@ -324,16 +304,15 @@ contains
     subroutine rotate(angle)
         !! Rotates the player.
         real, intent(in) :: angle
-        real             :: old_dir_x
-        real             :: old_plane_x
+        real             :: old
 
-        old_dir_x = dir%x
+        old = dir%x
         dir%x = dir%x * cos(angle) - dir%y * sin(angle)
-        dir%y = old_dir_x * sin(angle) + dir%y * cos(angle)
+        dir%y = old * sin(angle) + dir%y * cos(angle)
 
-        old_plane_x = plane%x
+        old = plane%x
         plane%x = plane%x * cos(angle) - plane%y * sin(angle)
-        plane%y = old_plane_x * sin(angle) + plane%y * cos(angle)
+        plane%y = old * sin(angle) + plane%y * cos(angle)
     end subroutine rotate
 
     subroutine tick()
@@ -348,11 +327,8 @@ contains
         fps = 1 / frame_time
 
         if (fps > 60) then
-            if (frame_time > min_time) &
-                frame_time = 0
-
-            call micro_sleep(int((min_time - frame_time) * 1000000))
-
+            if (frame_time > min_time) frame_time = 0
+            call c_usleep(int((min_time - frame_time) * 1000000))
             ! write (fps_str, '(a f8.1)') 'FPS: ', fps
             ! call x_set_foreground(display, gc, white)
             ! call x_draw_string(display, double_buffer, gc, 5, 15, fps_str, len(trim(fps_str)))
@@ -372,9 +348,7 @@ contains
 
         do x = 1, WIDTH
             call cast_ray(WIDTH, HEIGHT, x - 1, y1, y2, wall, side)
-
-            if (wall == 0) &
-                continue
+            if (wall == 0) continue
 
             color = wall_color(wall, side)
             call x_set_foreground(display, gc, pixels(color))
